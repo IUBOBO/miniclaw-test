@@ -3286,6 +3286,7 @@ export function startWebServer(webDeps: WebDeps): void {
     {
       fetch: app.fetch,
       port: WEB_PORT,
+      hostname: process.env.WEB_HOST || undefined,
       // Node HTTP server 默认 requestTimeout=300s（5min）会掐断慢速的大文件
       // 上传/下载。放宽到 10min，让大文件在一般网络下也能传完。
       // 取舍：requestTimeout 是服务器全局设置、对所有路由生效，且是"整个请求

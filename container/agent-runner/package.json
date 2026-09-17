@@ -9,6 +9,7 @@
     "start": "node dist/pi-index.js"
   },
   "dependencies": {
+    "@earendil-works/pi-ai": "0.84.2",
     "@earendil-works/pi-coding-agent": "0.84.2",
     "@tintinweb/pi-subagents": "0.16.1",
     "agent-browser": "0.33.1",

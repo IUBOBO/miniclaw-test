@@ -80,3 +80,6 @@ auth.json
 models.json
 .pi/
 yb_test/
+# Local service metadata and dependency store
+/.local/
+/.pnpm-store/
