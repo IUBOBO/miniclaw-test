@@ -39,7 +39,7 @@
     "axios": "1.18.1",
     "baileys": "^7.0.0-rc13",
     "bcryptjs": "^3.0.3",
-    "better-sqlite3": "^12.10.0",
+    "better-sqlite3": "^13.0.3",
     "cron-parser": "^5.5.0",
     "dingtalk-stream": "2.1.6-beta.1",
     "discord.js": "^14.26.2",

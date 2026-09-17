@@ -88,7 +88,7 @@ function buildIfNeeded(){
  return hash;
 }
 async function main(){
- if(Number(process.versions.node.split('.')[0])<20)throw Error('Node.js 20+ required');
+ if(Number(process.versions.node.split('.')[0])<22)throw Error('Node.js 22+ required');
  if(action==='status'){
   const s=readJson(stateFile);const alive=owned(s);const ok=alive&&await healthy(s.port);
   console.log(JSON.stringify({root,running:alive,healthy:ok,url:alive?`http://127.0.0.1:${s.port}`:null,pid:alive?s.pid:null,logs,runnerBuilt:fs.existsSync(path.join(root,'container/agent-runner/dist/pi-index.js'))},null,2));return;

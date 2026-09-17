@@ -1,4 +1,4 @@
-﻿param(
+param(
     [ValidateSet('Start','Stop','Status','Restart','Build')][string]$Action='Start',
     [ValidateRange(1024,65535)][int]$Port=3310,
     [switch]$Rebuild,
@@ -7,7 +7,7 @@
 $ErrorActionPreference='Stop'
 $nodeCmd=Get-Command node -ErrorAction SilentlyContinue
 $nodeExe=if($nodeCmd){$nodeCmd.Source}else{Join-Path $env:USERPROFILE '.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe'}
-if(-not(Test-Path -LiteralPath $nodeExe)){throw 'Node.js 20+ is required. Install Node.js and retry.'}
+if(-not(Test-Path -LiteralPath $nodeExe)){throw 'Node.js 22+ is required. Install Node.js and retry.'}
 $env:PATH=(Split-Path -Parent $nodeExe)+';'+$env:PATH
 $pnpmCmd=Get-Command pnpm.cmd -ErrorAction SilentlyContinue
 $pnpmExe=if($pnpmCmd){$pnpmCmd.Source}else{Join-Path $env:USERPROFILE '.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\fallback\pnpm.cmd'}
