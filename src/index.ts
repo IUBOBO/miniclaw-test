@@ -86,6 +86,7 @@ import {
 import { resolveFeishuCliBoundAccountId } from './feishu-cli-runtime.js';
 import { isValidWorkspaceFolderName } from './workspace-folder.js';
 import { PROVIDER_FAILURE_USER_NOTICE } from './provider-failure.js';
+import { providerRequestErrorNotice } from './provider-request-error.js';
 import {
   closeDatabase,
   createTask,
@@ -9151,6 +9152,25 @@ async function processGroupMessages(chatJid: string): Promise<boolean> {
     }
     const errorDetail = output.error || lastError || '未知错误';
 
+    // Invalid Provider configuration and unsupported request parameters are
+    // deterministic. Retrying the same durable input only hides the error and
+    // keeps the Web UI waiting, so finish the turn with a concise notice.
+    const providerRequestNotice = providerRequestErrorNotice(errorDetail);
+    if (providerRequestNotice) {
+      sendSystemMessage(chatJid, 'agent_error', providerRequestNotice);
+      await projectCurrentScheduledGroupTerminal(
+        'failed',
+        providerRequestNotice,
+      );
+      logger.warn(
+        { group: group.name, error: errorDetail },
+        'Provider request rejected; skipping retry',
+      );
+      commitCursor();
+      await clearProcessingIndicatorForInput(ipcReplyTurnTracker.inputTurnId);
+      return true;
+    }
+
     // Prompt/context startup budget is derived from the immutable context
     // snapshot for this turn. Retrying cannot change it, so classify it as a
     // deterministic failure and commit exactly once instead of entering the
@@ -16360,16 +16380,14 @@ async function processAgentConversation(
       runtimeAgentId: agentId,
       runtimeAgentKind: agent.kind,
     });
-    const miniclawOwnerProfileEnabled = isMiniclawOwnerProfileRuntimeEligible(
-      {
-        group: effectiveGroup,
-        profile: agentProfile,
-        turnId: lastProcessed.id,
-        isScheduledTask: Boolean(lastProcessed.task_id),
-        runtimeAgentId: agentId,
-        runtimeAgentKind: agent.kind,
-      },
-    );
+    const miniclawOwnerProfileEnabled = isMiniclawOwnerProfileRuntimeEligible({
+      group: effectiveGroup,
+      profile: agentProfile,
+      turnId: lastProcessed.id,
+      isScheduledTask: Boolean(lastProcessed.task_id),
+      runtimeAgentId: agentId,
+      runtimeAgentKind: agent.kind,
+    });
     const containerInput: ContainerInput = {
       prompt,
       sessionId,

@@ -33,14 +33,14 @@ import { loadMiniclawOwnerProfileTurnContext } from './owner-profile-context.js'
 import { loadWorkspaceMemoryTurnContext } from './workspace-memory-context.js';
 import { buildMiniclawPromptPlan } from './prompt-plan.js';
 import { resolveClaudeProviderRuntime } from './provider-runtime.js';
+import { resolvePiEffort } from './runtime/pi/pi-effort.js';
 import { resolveAgentRuntimeKind } from './runtime-config.js';
 import { adaptClaudeMcpToolsToPi } from './runtime/pi/pi-tools.js';
 import { PiRuntimeAdapter } from './runtime/pi/pi-runtime.js';
 import { runPiQueryAttempt } from './runtime/pi/pi-runner.js';
 
 const WORKSPACE_GROUP =
-  process.env.MINICLAW_WORKSPACE_GROUP ||
-  '/workspace/group';
+  process.env.MINICLAW_WORKSPACE_GROUP || '/workspace/group';
 const WORKSPACE_IPC =
   process.env.MINICLAW_WORKSPACE_IPC ||
   process.env.MINICLAW_WORKSPACE_IPC ||
@@ -343,6 +343,10 @@ async function runTurn(
       ),
       sessionId: input.sessionId,
       model: provider.model || undefined,
+      thinkingLevel: resolvePiEffort(
+        input.agentProfile?.runtimePolicy,
+        process.env,
+      ),
       systemPrompt: buildSystemPrompt(input, ctx),
       allowedTools: DEFAULT_ALLOWED_TOOLS,
       customTools,

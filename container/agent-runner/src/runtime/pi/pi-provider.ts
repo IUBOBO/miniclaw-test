@@ -1,6 +1,7 @@
 import type { Model } from '@earendil-works/pi-ai';
 import { getModel } from '@earendil-works/pi-ai/compat';
 import type { ModelRuntime } from '@earendil-works/pi-coding-agent';
+import { usesDeepSeekV41Template } from './pi-effort.js';
 
 export type PiProviderResolution = {
   providerId: string;
@@ -54,9 +55,7 @@ export async function resolvePiProvider(
   }
   const split = splitModelRef(rawModel || 'claude-sonnet');
   const custom = input.endpointKind === 'custom' || !!input.baseUrl?.trim();
-  const providerId = custom
-    ? `miniclaw-${split.providerId}`
-    : split.providerId;
+  const providerId = custom ? `miniclaw-${split.providerId}` : split.providerId;
 
   if (custom) {
     if (!input.baseUrl?.trim()) {
@@ -76,6 +75,27 @@ export async function resolvePiProvider(
           name: split.modelId,
           api,
           reasoning: true,
+          ...(api === 'openai-completions' &&
+          usesDeepSeekV41Template(input.baseUrl, rawModel)
+            ? {
+                thinkingLevelMap: {
+                  minimal: 'low',
+                  low: 'low',
+                  medium: 'low',
+                  high: 'high',
+                  xhigh: 'xhigh',
+                  max: 'max',
+                },
+                compat: {
+                  thinkingFormat: 'chat-template' as const,
+                  chatTemplateKwargs: {
+                    reasoning_effort: {
+                      $var: 'thinking.effort' as const,
+                    },
+                  },
+                },
+              }
+            : {}),
           input: ['text', 'image'],
           cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
           contextWindow: 200_000,

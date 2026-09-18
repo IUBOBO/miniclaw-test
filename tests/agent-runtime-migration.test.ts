@@ -160,4 +160,64 @@ describe('agent runtime migration contracts', () => {
     expect(result.newSessionId).toBe('pi-session-1');
     expect(disposed).toBe(true);
   });
+
+  it('ends a failed Pi turn immediately with the provider error', async () => {
+    const listeners = new Set<(event: any) => void>();
+    const abort = vi.fn().mockResolvedValue(undefined);
+    const dispose = vi.fn();
+    const session = {
+      kind: 'pi' as const,
+      sessionId: 'pi-session-error',
+      isStreaming: false,
+      subscribe(listener: (event: any) => void) {
+        listeners.add(listener);
+        return () => listeners.delete(listener);
+      },
+      async prompt() {
+        for (const listener of listeners) {
+          listener({
+            type: 'result',
+            sessionId: 'pi-session-error',
+            result: {
+              text: '',
+              sessionId: 'pi-session-error',
+              finalizationReason: 'error',
+              stopReason: 'error',
+              error: '400: reasoning_effort is invalid',
+            },
+          });
+        }
+      },
+      async steer() {},
+      async followUp() {},
+      abort,
+      async compact() {},
+      dispose,
+    };
+
+    await expect(
+      runPiQueryAttempt({
+        runtime: { createSession: async () => session } as any,
+        sessionOptions: { cwd: '/tmp', sessionDir: '/tmp/pi' },
+        prompt: 'hello',
+        containerInput: {
+          prompt: 'hello',
+          groupFolder: 'test',
+          chatJid: 'test:chat',
+        },
+        tracker: new IpcTurnDeliveryTracker(),
+        emit: () => {},
+        log: () => {},
+        drainInput: () => [],
+        shouldClose: () => false,
+        shouldInterrupt: () => false,
+        acceptIpcMessagesDuringQuery: false,
+        onSessionId: () => {},
+        onTurnActivated: () => {},
+        onTurnCompleted: () => {},
+      }),
+    ).rejects.toThrow('400: reasoning_effort is invalid');
+    expect(abort).toHaveBeenCalledOnce();
+    expect(dispose).toHaveBeenCalledOnce();
+  });
 });

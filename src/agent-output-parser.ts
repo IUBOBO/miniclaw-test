@@ -77,6 +77,8 @@ export interface StdoutParserState {
   hasProviderFailureOutput: boolean;
   /** True when agent emitted a stream event with statusText='interrupted'. */
   hasInterruptedOutput: boolean;
+  /** Last structured error emitted by the runner before a non-zero exit. */
+  lastErrorOutput: ContainerOutput | undefined;
 }
 
 export interface StdoutParserOptions {
@@ -98,6 +100,7 @@ export function createStdoutParserState(): StdoutParserState {
     hasClosedOutput: false,
     hasProviderFailureOutput: false,
     hasInterruptedOutput: false,
+    lastErrorOutput: undefined,
   };
 }
 
@@ -257,6 +260,9 @@ export function attachStdoutHandler(
         }
         if (parsed.status === 'closed') {
           state.hasClosedOutput = true;
+        }
+        if (parsed.status === 'error') {
+          state.lastErrorOutput = parsed;
         }
         if (
           parsed.status === 'stream' &&
@@ -596,6 +602,51 @@ export function handleNonZeroExit(
       { group: ctx.groupName, signal, code, duration },
       `${ctx.label} killed before producing any output — treating as error`,
     );
+  }
+
+  // The runner can emit a precise structured provider error immediately
+  // before exiting non-zero. Preserve that error instead of replacing it with
+  // a generic process-exit message built from the runner stack trace. The
+  // caller uses the original provider message to decide whether retrying is
+  // useful and to show an actionable error in the Web UI.
+  const parsedError = ctx.stdoutState.lastErrorOutput;
+  if (parsedError) {
+    logger.error(
+      {
+        group: ctx.groupName,
+        code,
+        signal,
+        duration,
+        error: parsedError.error,
+        logFile,
+      },
+      `${ctx.label} exited after structured error output`,
+    );
+
+    const finalizeParsedError = () => {
+      ctx.resolvePromise({
+        ...parsedError,
+        status: 'error',
+        result: parsedError.result ?? null,
+        newSessionId: parsedError.newSessionId ?? newSessionId,
+        providerFailure:
+          parsedError.providerFailure ||
+          ctx.stdoutState.hasProviderFailureOutput,
+      });
+    };
+
+    if (ctx.onOutput) {
+      waitForOutputChain(
+        outputChain,
+        ctx.groupName,
+        `${ctx.filePrefix} structured error path`,
+        finalizeParsedError,
+      );
+      return true;
+    }
+
+    finalizeParsedError();
+    return true;
   }
 
   // Build error output

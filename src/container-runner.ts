@@ -2741,20 +2741,37 @@ export async function runHostAgent(
 
     // Auto-rebuild if dist is stale (src newer than dist)
     try {
-      const distMtime = fs.statSync(agentRunnerDist).mtimeMs;
+      const buildStamp = path.join(agentRunnerRoot, 'dist', '.tsbuildinfo');
+      const distMtime = fs.existsSync(buildStamp)
+        ? fs.statSync(buildStamp).mtimeMs
+        : fs.statSync(agentRunnerDist).mtimeMs;
       const srcDir = path.join(agentRunnerRoot, 'src');
-      const srcFiles = fs.readdirSync(srcDir);
-      const newestSrc = Math.max(
-        ...srcFiles.map((f) => fs.statSync(path.join(srcDir, f)).mtimeMs),
-      );
+      const sourceStack = [srcDir];
+      let newestSrc = 0;
+      while (sourceStack.length > 0) {
+        const directory = sourceStack.pop()!;
+        for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+          const entryPath = path.join(directory, entry.name);
+          if (entry.isDirectory()) sourceStack.push(entryPath);
+          else if (entry.isFile() && entry.name.endsWith('.ts')) {
+            newestSrc = Math.max(newestSrc, fs.statSync(entryPath).mtimeMs);
+          }
+        }
+      }
       if (newestSrc > distMtime) {
         logger.info(
           { group: group.name },
           'agent-runner dist 已过期，自动重新编译...',
         );
         try {
-          const { execSync } = await import('child_process');
-          execSync('npm run build', {
+          const tsc = path.join(
+            agentRunnerRoot,
+            'node_modules',
+            'typescript',
+            'bin',
+            'tsc',
+          );
+          execFileSync(process.execPath, [tsc], {
             cwd: agentRunnerRoot,
             stdio: 'pipe',
             timeout: 30_000,

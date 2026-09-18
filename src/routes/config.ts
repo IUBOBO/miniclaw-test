@@ -317,7 +317,8 @@ function getPendingProviderSessionInvalidation(
     providerId,
     modelChanged: durable.modelChanged || volatile.modelChanged,
     baseUrlChanged: durable.baseUrlChanged || volatile.baseUrlChanged,
-    apiProtocolChanged: durable.apiProtocolChanged || volatile.apiProtocolChanged,
+    apiProtocolChanged:
+      durable.apiProtocolChanged || volatile.apiProtocolChanged,
   };
 }
 
@@ -329,7 +330,8 @@ function setPendingProviderSessionInvalidation(
     providerId: pending.providerId,
     modelChanged: pending.modelChanged || previous?.modelChanged === true,
     baseUrlChanged: pending.baseUrlChanged || previous?.baseUrlChanged === true,
-    apiProtocolChanged: pending.apiProtocolChanged || previous?.apiProtocolChanged === true,
+    apiProtocolChanged:
+      pending.apiProtocolChanged || previous?.apiProtocolChanged === true,
   };
   // Keep an in-process repair path even if durable state persistence fails.
   volatilePendingProviderSessionInvalidations.set(pending.providerId, merged);
@@ -474,7 +476,7 @@ function hasWorkspaceProviderOverride(
   invalidation?: ApplyOptions['sessionInvalidation'],
 ): boolean {
   if (!invalidation) return false;
-   // API 协议属于 Provider 级别配置，Workspace 当前无法覆盖它。
+  // API 协议属于 Provider 级别配置，Workspace 当前无法覆盖它。
   // 因此协议变化时，旧 session 必须失效。
   if (invalidation.apiProtocolChanged) {
     return false;
@@ -1028,10 +1030,26 @@ configRoutes.patch(
         const changedFields = Object.keys(validation.data).map(
           (k) => `${k}:updated`,
         );
-        const baseUrlChanged = !!(
-          validation.data.anthropicBaseUrl !== undefined &&
-          validation.data.anthropicBaseUrl !== previous.anthropicBaseUrl
-        );
+        const targetProtocol =
+          validation.data.apiProtocol ?? previous.apiProtocol;
+        const nextBaseUrl =
+          validation.data.anthropicBaseUrl ??
+          validation.data.protocolBaseUrls?.[targetProtocol] ??
+          previous.protocolBaseUrls?.[targetProtocol] ??
+          (targetProtocol === previous.apiProtocol
+            ? previous.anthropicBaseUrl
+            : '');
+        if (
+          previous.type === 'third_party' &&
+          targetProtocol !== previous.apiProtocol &&
+          !nextBaseUrl.trim()
+        ) {
+          return c.json(
+            { error: '请先填写所选协议的 Base URL，再保存切换。' },
+            400,
+          );
+        }
+        const baseUrlChanged = nextBaseUrl.trim() !== previous.anthropicBaseUrl;
         const modelChanged = !!(
           validation.data.anthropicModel !== undefined &&
           validation.data.anthropicModel !== previous.anthropicModel
@@ -1057,7 +1075,8 @@ configRoutes.patch(
           baseUrlChanged:
             baseUrlChanged || pendingInvalidation?.baseUrlChanged === true,
           apiProtocolChanged:
-            apiProtocolChanged || pendingInvalidation?.apiProtocolChanged === true,
+            apiProtocolChanged ||
+            pendingInvalidation?.apiProtocolChanged === true,
         };
         const shouldClearSessions =
           !!pendingInvalidation || protocolFieldChanged;

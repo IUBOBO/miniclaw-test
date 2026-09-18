@@ -310,6 +310,14 @@ export async function runPiQueryAttempt(
       if (resultState.result) {
         const result = resultState.result;
         resultState.result = undefined;
+        // A failed provider turn cannot be repaired by waiting for follow-up
+        // input. End it promptly so the host can classify and display it.
+        if (result.finalizationReason === 'error') {
+          await session.abort().catch(() => undefined);
+          throw new Error(
+            result.error || 'Model request failed without an error detail',
+          );
+        }
         publishResult(result);
       }
       if (resultState.fatalError) {

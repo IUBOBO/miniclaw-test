@@ -211,10 +211,11 @@ const MAX_THIRD_PARTY_PROFILES = 20;
 
 type ClaudeProviderMode = 'official' | 'third_party';
 
-export type ProviderApiProtocol =
-  | 'anthropic-messages'
-  | 'openai-completions';
+export type ProviderApiProtocol = 'anthropic-messages' | 'openai-completions';
 
+export type ProviderProtocolBaseUrls = Partial<
+  Record<ProviderApiProtocol, string>
+>;
 
 function normalizeProviderApiProtocol(
   input: unknown,
@@ -239,10 +240,7 @@ function normalizeProviderApiProtocol(
     return 'anthropic-messages';
   }
 
-  if (
-    input === 'anthropic-messages' ||
-    input === 'openai-completions'
-  ) {
+  if (input === 'anthropic-messages' || input === 'openai-completions') {
     return input;
   }
 
@@ -478,6 +476,7 @@ interface StoredProviderV4 {
   enabled: boolean;
   weight: number;
   apiProtocol?: ProviderApiProtocol;
+  protocolBaseUrls?: ProviderProtocolBaseUrls;
   anthropicBaseUrl: string;
   anthropicModel: string;
   secrets: EncryptedSecrets;
@@ -510,6 +509,7 @@ export interface UnifiedProvider {
   enabled: boolean;
   weight: number;
   apiProtocol: ProviderApiProtocol;
+  protocolBaseUrls: ProviderProtocolBaseUrls;
   anthropicBaseUrl: string;
   anthropicAuthToken: string;
   anthropicModel: string;
@@ -528,6 +528,7 @@ export interface UnifiedProviderPublic {
   enabled: boolean;
   weight: number;
   apiProtocol: ProviderApiProtocol;
+  protocolBaseUrls: ProviderProtocolBaseUrls;
   anthropicBaseUrl: string;
   anthropicModel: string;
   hasAnthropicAuthToken: boolean;
@@ -594,6 +595,31 @@ function normalizeBaseUrl(input: unknown): string {
     throw new Error('Invalid field: anthropicBaseUrl');
   }
   return value;
+}
+
+function normalizeProtocolBaseUrls(
+  input: unknown,
+  fallbackProtocol?: ProviderApiProtocol,
+  fallbackBaseUrl?: string,
+): ProviderProtocolBaseUrls {
+  const normalized: ProviderProtocolBaseUrls = {};
+  if (input && typeof input === 'object' && !Array.isArray(input)) {
+    const record = input as Record<string, unknown>;
+    for (const protocol of [
+      'anthropic-messages',
+      'openai-completions',
+    ] as const) {
+      if (record[protocol] !== undefined) {
+        const value = normalizeBaseUrl(record[protocol]);
+        if (value) normalized[protocol] = value;
+      }
+    }
+  }
+  if (fallbackProtocol && fallbackBaseUrl && !normalized[fallbackProtocol]) {
+    const value = normalizeBaseUrl(fallbackBaseUrl);
+    if (value) normalized[fallbackProtocol] = value;
+  }
+  return normalized;
 }
 
 function normalizeModel(input: unknown): string {
@@ -1185,6 +1211,11 @@ function toStoredProviderV4(provider: UnifiedProvider): StoredProviderV4 {
     enabled: provider.enabled,
     weight: Math.max(1, Math.min(100, provider.weight || 1)),
     apiProtocol: provider.apiProtocol,
+    protocolBaseUrls: normalizeProtocolBaseUrls(
+      provider.protocolBaseUrls,
+      provider.apiProtocol,
+      provider.anthropicBaseUrl,
+    ),
     anthropicBaseUrl: provider.anthropicBaseUrl || '',
     anthropicModel: provider.anthropicModel || '',
     secrets: encryptSecrets(secrets),
@@ -1197,17 +1228,24 @@ function toStoredProviderV4(provider: UnifiedProvider): StoredProviderV4 {
 
 function fromStoredProviderV4(stored: StoredProviderV4): UnifiedProvider {
   const secrets = decryptSecrets(stored.secrets);
+  const apiProtocol = normalizeProviderApiProtocol(
+    stored.apiProtocol,
+    stored.type,
+  );
+  const protocolBaseUrls = normalizeProtocolBaseUrls(
+    stored.protocolBaseUrls,
+    apiProtocol,
+    stored.anthropicBaseUrl || '',
+  );
   return {
     id: stored.id,
     name: stored.name,
     type: stored.type,
     enabled: stored.enabled,
     weight: Math.max(1, Math.min(100, stored.weight || 1)),
-    apiProtocol: normalizeProviderApiProtocol(
-      stored.apiProtocol,
-      stored.type,
-    ),
-    anthropicBaseUrl: stored.anthropicBaseUrl || '',
+    apiProtocol,
+    protocolBaseUrls,
+    anthropicBaseUrl: protocolBaseUrls[apiProtocol] || '',
     anthropicAuthToken: secrets.anthropicAuthToken || '',
     anthropicModel: stored.anthropicModel || '',
     anthropicApiKey: secrets.anthropicApiKey || '',
@@ -1241,6 +1279,7 @@ function migrateV3toV4(v3: ClaudeStoredStateV3Resolved): {
       enabled: isOfficialClaudeMode(v3.activeProfileId),
       weight: 1,
       apiProtocol: 'anthropic-messages',
+      protocolBaseUrls: {},
       anthropicBaseUrl: '',
       anthropicAuthToken: '',
       anthropicModel: '',
@@ -1262,6 +1301,9 @@ function migrateV3toV4(v3: ClaudeStoredStateV3Resolved): {
       enabled: profile.id === v3.activeProfileId,
       weight: 1,
       apiProtocol: 'anthropic-messages',
+      protocolBaseUrls: profile.anthropicBaseUrl
+        ? { 'anthropic-messages': profile.anthropicBaseUrl }
+        : {},
       anthropicBaseUrl: profile.anthropicBaseUrl,
       anthropicAuthToken: profile.anthropicAuthToken,
       anthropicModel: profile.anthropicModel,
@@ -1493,6 +1535,7 @@ export function createProvider(input: {
   name: string;
   type: 'official' | 'third_party';
   apiProtocol?: ProviderApiProtocol;
+  protocolBaseUrls?: ProviderProtocolBaseUrls;
   anthropicBaseUrl?: string;
   anthropicAuthToken?: string;
   anthropicModel?: string;
@@ -1514,19 +1557,29 @@ export function createProvider(input: {
   }
 
   const now = new Date().toISOString();
+  const apiProtocol = normalizeProviderApiProtocol(
+    input.apiProtocol,
+    input.type,
+  );
+  const protocolBaseUrls = normalizeProtocolBaseUrls(
+    input.protocolBaseUrls,
+    apiProtocol,
+    input.anthropicBaseUrl || '',
+  );
+  if (input.anthropicBaseUrl !== undefined) {
+    const activeBaseUrl = normalizeBaseUrl(input.anthropicBaseUrl);
+    if (activeBaseUrl) protocolBaseUrls[apiProtocol] = activeBaseUrl;
+    else delete protocolBaseUrls[apiProtocol];
+  }
   const provider: UnifiedProvider = {
     id: crypto.randomBytes(8).toString('hex'),
     name: normalizeProfileName(input.name),
     type: input.type,
     enabled: state.providers.length === 0 ? true : (input.enabled ?? false),
     weight: Math.max(1, Math.min(100, input.weight ?? 1)),
-    apiProtocol: normalizeProviderApiProtocol(
-      input.apiProtocol,
-      input.type,
-    ),
-    anthropicBaseUrl: input.anthropicBaseUrl
-      ? normalizeBaseUrl(input.anthropicBaseUrl)
-      : '',
+    apiProtocol,
+    protocolBaseUrls,
+    anthropicBaseUrl: protocolBaseUrls[apiProtocol] || '',
     anthropicAuthToken: input.anthropicAuthToken
       ? normalizeSecret(input.anthropicAuthToken, 'anthropicAuthToken')
       : '',
@@ -1558,6 +1611,7 @@ export function updateProvider(
   patch: {
     name?: string;
     apiProtocol?: ProviderApiProtocol;
+    protocolBaseUrls?: ProviderProtocolBaseUrls;
     anthropicBaseUrl?: string;
     anthropicModel?: string;
     customEnv?: Record<string, string>;
@@ -1571,17 +1625,43 @@ export function updateProvider(
   if (idx < 0) throw new Error('未找到指定供应商');
 
   const current = state.providers[idx];
+  const apiProtocol =
+    patch.apiProtocol !== undefined
+      ? normalizeProviderApiProtocol(patch.apiProtocol, current.type)
+      : current.apiProtocol;
+  const protocolBaseUrls = normalizeProtocolBaseUrls(
+    current.protocolBaseUrls,
+    current.apiProtocol,
+    current.anthropicBaseUrl,
+  );
+  if (patch.protocolBaseUrls !== undefined) {
+    for (const protocol of [
+      'anthropic-messages',
+      'openai-completions',
+    ] as const) {
+      const value = patch.protocolBaseUrls[protocol];
+      if (value === undefined) continue;
+      const normalized = normalizeBaseUrl(value);
+      if (normalized) protocolBaseUrls[protocol] = normalized;
+      else delete protocolBaseUrls[protocol];
+    }
+  }
+  if (patch.anthropicBaseUrl !== undefined) {
+    const activeBaseUrl = normalizeBaseUrl(patch.anthropicBaseUrl);
+    if (activeBaseUrl) {
+      protocolBaseUrls[apiProtocol] = activeBaseUrl;
+    } else {
+      delete protocolBaseUrls[apiProtocol];
+    }
+  }
   const updated: UnifiedProvider = {
     ...current,
     ...(patch.name !== undefined
       ? { name: normalizeProfileName(patch.name) }
       : {}),
-    ...(patch.apiProtocol !== undefined
-      ? { apiProtocol: normalizeProviderApiProtocol(patch.apiProtocol, current.type,),}
-      : {}),
-    ...(patch.anthropicBaseUrl !== undefined
-      ? { anthropicBaseUrl: normalizeBaseUrl(patch.anthropicBaseUrl) }
-      : {}),
+    apiProtocol,
+    protocolBaseUrls,
+    anthropicBaseUrl: protocolBaseUrls[apiProtocol] || '',
     ...(patch.anthropicModel !== undefined
       ? { anthropicModel: normalizeModel(patch.anthropicModel) }
       : {}),
@@ -1597,6 +1677,14 @@ export function updateProvider(
       : {}),
     updatedAt: new Date().toISOString(),
   };
+
+  if (
+    current.type === 'third_party' &&
+    apiProtocol !== current.apiProtocol &&
+    !updated.anthropicBaseUrl
+  ) {
+    throw new Error('请先填写所选协议的 Base URL，再保存切换。');
+  }
 
   state.providers[idx] = updated;
   writeStoredStateV4(state.providers, state.balancing, state.defaultProviderId);
@@ -1755,6 +1843,7 @@ export function toPublicProvider(
     enabled: provider.enabled,
     weight: provider.weight,
     apiProtocol: provider.apiProtocol,
+    protocolBaseUrls: { ...provider.protocolBaseUrls },
     anthropicBaseUrl: provider.anthropicBaseUrl,
     anthropicModel: provider.anthropicModel,
     hasAnthropicAuthToken: !!provider.anthropicAuthToken,
@@ -3099,10 +3188,10 @@ export function buildContainerEnvLines(
 ): string[] {
   const merged = mergeClaudeEnvConfig(global, override);
   const lines = [
-  `${CLAUDE_ENDPOINT_KIND_ENV}=${merged.anthropicBaseUrl ? 'custom' : 'official'}`,
-  `${MINICLAW_PROVIDER_API_ENV}=${merged.apiProtocol ?? 'anthropic-messages'}`,
-  ...buildClaudeEnvLines(merged, profileCustomEnv),
-];
+    `${CLAUDE_ENDPOINT_KIND_ENV}=${merged.anthropicBaseUrl ? 'custom' : 'official'}`,
+    `${MINICLAW_PROVIDER_API_ENV}=${merged.apiProtocol ?? 'anthropic-messages'}`,
+    ...buildClaudeEnvLines(merged, profileCustomEnv),
+  ];
 
   // Append custom env vars (with safety sanitization as defense-in-depth)
   if (override.customEnv) {

@@ -33,6 +33,66 @@ afterAll(() => {
 });
 
 describe('default model configuration', () => {
+  test('persists protocol-specific URLs and restores them when switching', () => {
+    const provider = runtimeConfig.createProvider({
+      name: 'Two protocols',
+      type: 'third_party',
+      apiProtocol: 'anthropic-messages',
+      anthropicBaseUrl: 'https://gateway.test/anthropic',
+      anthropicAuthToken: 'private-test-key',
+    });
+    expect(() =>
+      runtimeConfig.updateProvider(provider.id, {
+        apiProtocol: 'openai-completions',
+      }),
+    ).toThrow('Base URL');
+    runtimeConfig.updateProvider(provider.id, {
+      apiProtocol: 'openai-completions',
+      anthropicBaseUrl: 'https://gateway.test/v1',
+    });
+    let restored = runtimeConfig.updateProvider(provider.id, {
+      apiProtocol: 'anthropic-messages',
+    });
+    expect(restored.anthropicBaseUrl).toBe('https://gateway.test/anthropic');
+    restored = runtimeConfig.updateProvider(provider.id, {
+      apiProtocol: 'openai-completions',
+    });
+    expect(runtimeConfig.providerToConfig(restored)).toMatchObject({
+      apiProtocol: 'openai-completions',
+      anthropicBaseUrl: 'https://gateway.test/v1',
+      anthropicAuthToken: 'private-test-key',
+    });
+    expect(
+      runtimeConfig.buildContainerEnvLines(
+        runtimeConfig.providerToConfig(restored),
+        {},
+        {},
+      ),
+    ).toContain('MINICLAW_PROVIDER_API=openai-completions');
+    expect(
+      runtimeConfig.buildClaudeEnvLines(
+        runtimeConfig.providerToConfig(restored),
+        {},
+      ),
+    ).toContain('ANTHROPIC_BASE_URL=https://gateway.test/v1');
+    expect(runtimeConfig.toPublicProvider(restored).protocolBaseUrls).toEqual({
+      'anthropic-messages': 'https://gateway.test/anthropic',
+      'openai-completions': 'https://gateway.test/v1',
+    });
+    const disk = JSON.parse(fs.readFileSync(configFile, 'utf8'));
+    const item = disk.providers.find(
+      (p: { id: string }) => p.id === provider.id,
+    );
+    delete item.protocolBaseUrls;
+    fs.writeFileSync(configFile, JSON.stringify(disk));
+    expect(
+      runtimeConfig.getProviders().find((p) => p.id === provider.id)
+        ?.protocolBaseUrls,
+    ).toEqual({
+      'openai-completions': 'https://gateway.test/v1',
+    });
+    fs.unlinkSync(configFile);
+  });
   test('strips root-side permission controls from saved Workspace env', () => {
     runtimeConfig.saveContainerEnvConfig('permission-env-workspace', {
       customEnv: {

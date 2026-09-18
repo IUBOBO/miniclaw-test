@@ -154,6 +154,7 @@ afterEach(async () => {
 });
 
 afterAll(() => {
+  db.closeDatabase();
   fs.rmSync(tmpDir, { recursive: true, force: true });
 });
 
@@ -1055,6 +1056,54 @@ describe('provider session invalidation only removes attributable sessions', () 
       runtimeConfig.getProviders().find((item) => item.id === provider.id)
         ?.anthropicBaseUrl,
     ).toBe('https://valid.example.test');
+  });
+
+  test('switches protocol with its saved URL and invalidates bound sessions', async () => {
+    const folder = unique('protocol-switch');
+    const jid = `web:${folder}`;
+    bindIdleWorkspace(jid, folder, 'previous-session');
+    const provider = runtimeConfig.createProvider({
+      name: unique('protocol-provider'),
+      type: 'third_party',
+      anthropicBaseUrl: 'https://gateway.test/anthropic',
+      anthropicAuthToken: 'test-token',
+      enabled: true,
+      protocolBaseUrls: { 'openai-completions': 'https://gateway.test/v1' },
+    });
+    db.setSession(folder, 'previous-session');
+    db.setSessionProviderId(folder, '', provider.id);
+    const response = await patchProvider(provider.id, {
+      apiProtocol: 'openai-completions',
+    });
+    expect(response.status).toBe(200);
+    expect(db.getSession(folder)).toBeUndefined();
+    expect(
+      runtimeConfig.getProviders().find((p) => p.id === provider.id),
+    ).toMatchObject({
+      apiProtocol: 'openai-completions',
+      anthropicBaseUrl: 'https://gateway.test/v1',
+    });
+    const back = await patchProvider(provider.id, {
+      apiProtocol: 'anthropic-messages',
+    });
+    expect(back.status).toBe(200);
+    expect(
+      runtimeConfig.getProviders().find((p) => p.id === provider.id)
+        ?.anthropicBaseUrl,
+    ).toBe('https://gateway.test/anthropic');
+    db.setSession(folder, 'updated-session');
+    db.setSessionProviderId(folder, '', provider.id);
+    const edited = await patchProvider(provider.id, {
+      protocolBaseUrls: {
+        'anthropic-messages': 'https://changed.test/anthropic',
+      },
+    });
+    expect(edited.status).toBe(200);
+    expect(db.getSession(folder)).toBeUndefined();
+    expect(
+      runtimeConfig.getProviders().find((p) => p.id === provider.id)
+        ?.anthropicBaseUrl,
+    ).toBe('https://changed.test/anthropic');
   });
 
   test('keeps the main-session cache when only a target-provider agent session is invalidated', async () => {

@@ -1,8 +1,6 @@
 // ─── 统一供应商类型 (V4) ─────────────────────────────────────
 
-export type ProviderApiProtocol =
-  | 'anthropic-messages'
-  | 'openai-completions';
+export type ProviderApiProtocol = 'anthropic-messages' | 'openai-completions';
 
 export interface UnifiedProviderPublic {
   id: string;
@@ -11,6 +9,7 @@ export interface UnifiedProviderPublic {
   enabled: boolean;
   weight: number;
   apiProtocol: ProviderApiProtocol;
+  protocolBaseUrls?: Partial<Record<ProviderApiProtocol, string>>;
   anthropicBaseUrl: string;
   anthropicModel: string;
   hasAnthropicAuthToken: boolean;

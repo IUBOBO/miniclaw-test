@@ -208,6 +208,52 @@ describe('isApiError — stderr classification still detects provider issues', (
 });
 
 describe('handleNonZeroExit — provider failure lifecycle', () => {
+  test('preserves the runner structured error on a non-zero exit', async () => {
+    const stdoutState = createStdoutParserState();
+    stdoutState.newSessionId = 'session-after-provider-error';
+    stdoutState.lastErrorOutput = {
+      status: 'error',
+      result: null,
+      error: 'Anthropic stream ended without a stop reason',
+      newSessionId: 'session-after-provider-error',
+    };
+    const resolved: ContainerOutput[] = [];
+
+    expect(
+      handleNonZeroExit(
+        {
+          groupName: 'structured-error-test',
+          label: 'Host agent',
+          filePrefix: 'host-agent',
+          identifier: 'runner-id',
+          logsDir: '/tmp',
+          input: { prompt: 'prompt', isMain: true },
+          stdoutState,
+          stderrState: createStderrState(),
+          onOutput: async () => {},
+          resolvePromise: (output) => resolved.push(output),
+          startTime: Date.now(),
+          timeoutMs: 1_000,
+        },
+        1,
+        null,
+        10,
+        '/tmp/structured-error.log',
+      ),
+    ).toBe(true);
+
+    await stdoutState.outputChain;
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(resolved).toEqual([
+      expect.objectContaining({
+        status: 'error',
+        result: null,
+        error: 'Anthropic stream ended without a stop reason',
+        newSessionId: 'session-after-provider-error',
+      }),
+    ]);
+  });
+
   test.each([
     {
       label: 'SIGTERM',
