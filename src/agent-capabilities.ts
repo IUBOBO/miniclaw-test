@@ -68,20 +68,30 @@ export const AGENT_CAPABILITIES: AgentCapability[] = [
 
 async function isBinaryAvailable(binary: string): Promise<boolean> {
   try {
-    await execFileAsync('which', [binary], { timeout: 5_000 });
+    await execFileAsync(commandLocator(), [binary], { timeout: 5_000 });
     return true;
   } catch {
     return false;
   }
 }
 
+/** Use the native command locator so host preflight also works on Windows. */
+function commandLocator(): string {
+  return os.platform() === 'win32' ? 'where.exe' : 'which';
+}
+
 /** Resolve the actual path of a host capability binary. */
 async function resolveBinaryPath(binary: string): Promise<string | null> {
   try {
-    const { stdout } = await execFileAsync('which', [binary], {
+    const { stdout } = await execFileAsync(commandLocator(), [binary], {
       timeout: 5_000,
     });
-    return stdout.trim() || null;
+    return (
+      stdout
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .find(Boolean) ?? null
+    );
   } catch {
     return null;
   }
