@@ -65,6 +65,7 @@ export class PiRuntimeAdapter implements AgentRuntime {
     const modelResolution = await resolvePiProvider(modelRuntime, {
       model: options.model,
       endpointKind: options.provider?.endpointKind,
+      api: options.provider?.api,
       baseUrl: options.provider?.baseUrl,
       apiKey: options.provider?.apiKey,
     });

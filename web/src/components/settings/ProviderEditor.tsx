@@ -27,7 +27,11 @@ import {
   buildProviderModel,
   parseProviderModel,
 } from '../../utils/provider-model';
-import type { ProviderWithHealth, EnvRow } from './types';
+import type {
+  ProviderWithHealth,
+  EnvRow,
+  ProviderApiProtocol,
+} from './types';
 import { getErrorMessage } from './types';
 
 type ProviderType = 'official' | 'third_party';
@@ -39,6 +43,7 @@ const RESERVED_ENV_KEYS = new Set([
   'ANTHROPIC_API_KEY',
   'CLAUDE_CODE_OAUTH_TOKEN',
   'ANTHROPIC_MODEL',
+  'MINICLAW_PROVIDER_API',
 ]);
 
 const DEFAULTED_THIRD_PARTY_ENV_KEYS = new Set(
@@ -115,6 +120,7 @@ export function ProviderEditor({
 
   // 基础字段
   const [providerType, setProviderType] = useState<ProviderType>('third_party');
+  const [apiProtocol, setApiProtocol] = useState<ProviderApiProtocol>('anthropic-messages');
   const [name, setName] = useState('');
   const [baseUrl, setBaseUrl] = useState('');
   const [model, setModel] = useState('');
@@ -157,6 +163,7 @@ export function ProviderEditor({
 
     if (isCreate) {
       setProviderType('third_party');
+      setApiProtocol('anthropic-messages');
       setName('');
       setBaseUrl('');
       setModel('');
@@ -173,6 +180,7 @@ export function ProviderEditor({
       setProviderEnvOverrides({});
     } else {
       setProviderType(provider.type);
+      setApiProtocol(provider.type === 'official'? 'anthropic-messages': provider.apiProtocol ?? 'anthropic-messages',);
       setName(provider.name);
       setBaseUrl(provider.anthropicBaseUrl || '');
       const modelSelection = parseProviderModel(provider.anthropicModel || '');
@@ -343,10 +351,14 @@ export function ProviderEditor({
       if (isCreate) {
         // ── 创建模式 ──
         const createBody: Record<string, unknown> = {
-          name: trimmedName,
-          type: providerType,
-          customEnv: savedCustomEnv,
-        };
+            name: trimmedName,
+            type: providerType,
+            apiProtocol:
+              providerType === 'official'
+                ? 'anthropic-messages'
+                : apiProtocol,
+            customEnv: savedCustomEnv,
+          };
 
         if (providerType === 'third_party') {
           const trimmedToken = authToken.trim();
@@ -413,6 +425,10 @@ export function ProviderEditor({
         // ── 编辑模式 ──
         const patchBody: Record<string, unknown> = {
           name: trimmedName,
+          apiProtocol:
+            providerType === 'official'
+              ? 'anthropic-messages'
+              : apiProtocol,
           customEnv: savedCustomEnv,
         };
 
@@ -520,7 +536,7 @@ export function ProviderEditor({
           </DialogTitle>
           <DialogDescription className="text-left text-xs leading-5">
             {providerType === 'third_party'
-              ? '填写端点、密钥和模型即可；Claude Code 运行参数会自动预填，也可在高级设置中调整。'
+              ? '选择兼容协议并填写端点、密钥和模型；运行参数可在高级设置中调整。'
               : '配置 Claude 官方认证方式与默认模型。'}
           </DialogDescription>
         </DialogHeader>
@@ -779,23 +795,71 @@ export function ProviderEditor({
             <div className="space-y-5">
               <div>
                 <label className="mb-1.5 flex items-center justify-between gap-3 text-xs font-medium text-foreground">
+                <div>
+                  <label className="block text-xs font-medium text-foreground mb-1.5">
+                    API 协议
+                  </label>
+
+                  <div className="inline-flex rounded-lg border border-border p-1 bg-muted">
+                    <button
+                      type="button"
+                      aria-pressed={apiProtocol === 'anthropic-messages'}
+                      onClick={() => setApiProtocol('anthropic-messages')}
+                      disabled={saving}
+                      className={`min-h-9 rounded-md px-3 py-1.5 text-sm transition-colors cursor-pointer ${
+                        apiProtocol === 'anthropic-messages'
+                          ? 'bg-background text-primary shadow-sm'
+                          : 'text-muted-foreground'
+                      }`}
+                    >
+                      Anthropic Compatible
+                    </button>
+
+                    <button
+                      type="button"
+                      aria-pressed={apiProtocol === 'openai-completions'}
+                      onClick={() => setApiProtocol('openai-completions')}
+                      disabled={saving}
+                      className={`min-h-9 rounded-md px-3 py-1.5 text-sm transition-colors cursor-pointer ${
+                        apiProtocol === 'openai-completions'
+                          ? 'bg-background text-primary shadow-sm'
+                          : 'text-muted-foreground'
+                      }`}
+                    >
+                      OpenAI Compatible
+                    </button>
+                  </div>
+
+                  <p className="mt-1.5 text-xs text-muted-foreground">
+                    {apiProtocol === 'openai-completions'
+                      ? '适用于兼容 OpenAI Chat Completions API 的第三方模型服务。'
+                      : '适用于兼容 Anthropic Messages API 的第三方模型服务。'}
+                  </p>
+                </div>
                   <span>API 端点</span>
                   <span className="font-normal text-muted-foreground">
                     ANTHROPIC_BASE_URL
                   </span>
                 </label>
-                <Input
-                  type="url"
-                  inputMode="url"
-                  value={baseUrl}
-                  onChange={(e) => setBaseUrl(e.target.value)}
-                  disabled={saving}
-                  placeholder="https://api.example.com/anthropic"
-                  autoComplete="off"
-                />
-                <p className="mt-1.5 text-xs text-muted-foreground">
-                  填写 Anthropic 兼容接口的完整地址。
-                </p>
+                  <Input
+                    type="url"
+                    inputMode="url"
+                    value={baseUrl}
+                    onChange={(e) => setBaseUrl(e.target.value)}
+                    disabled={saving}
+                    placeholder={
+                      apiProtocol === 'openai-completions'
+                        ? 'https://api.example.com/v1'
+                        : 'https://api.example.com/anthropic'
+                    }
+                    autoComplete="off"
+                  />
+
+                  <p className="mt-1.5 text-xs text-muted-foreground">
+                    {apiProtocol === 'openai-completions'
+                      ? '填写 OpenAI Compatible API 的基础地址，通常以 /v1 结尾。'
+                      : '填写 Anthropic Compatible API 的完整地址。'}
+                  </p>
               </div>
 
               <div>

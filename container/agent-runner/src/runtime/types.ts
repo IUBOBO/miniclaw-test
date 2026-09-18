@@ -8,6 +8,10 @@
 
 export type RuntimeKind = 'claude' | 'pi';
 
+export type RuntimeProviderApi =
+  | 'anthropic-messages'
+  | 'openai-completions';
+
 export type RuntimeImage = {
   data: string;
   mimeType?: string;
@@ -131,9 +135,21 @@ export type RuntimeSessionOptions = {
   extensionPaths?: string[];
   /** Runtime-specific provider configuration. */
   provider?: {
-    endpointKind?: 'official' | 'custom';
-    baseUrl?: string;
-    apiKey?: string;
+  endpointKind?: 'official' | 'custom';
+
+  /**
+   * Provider 底层 API 协议。
+   *
+   * anthropic-messages:
+   *   Anthropic Messages API compatible
+   *
+   * openai-completions:
+   *   OpenAI Chat Completions API compatible
+   */
+  api?: RuntimeProviderApi;
+
+  baseUrl?: string;
+  apiKey?: string;
   };
   /**
    * Product auto-compact toggle (default true). Maps to the runtime-native

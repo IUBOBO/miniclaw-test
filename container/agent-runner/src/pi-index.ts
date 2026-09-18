@@ -348,6 +348,7 @@ async function runTurn(
       customTools,
       provider: {
         endpointKind: provider.endpointKind,
+        api: provider.api,
         baseUrl: process.env.ANTHROPIC_BASE_URL,
         apiKey:
           process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN,

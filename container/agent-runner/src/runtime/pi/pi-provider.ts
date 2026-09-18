@@ -29,11 +29,13 @@ export async function resolvePiProvider(
   input: {
     model?: string;
     endpointKind?: 'official' | 'custom';
+    api?: 'anthropic-messages' | 'openai-completions';
     baseUrl?: string;
     apiKey?: string;
   },
 ): Promise<PiProviderResolution> {
   const rawModel = input.model?.trim() || '';
+  const api = input.api || 'anthropic-messages';
   if (!rawModel && input.endpointKind !== 'custom' && !input.baseUrl?.trim()) {
     const defaultModel = modelRuntime.getModels('anthropic')[0];
     if (!defaultModel) {
@@ -66,13 +68,13 @@ export async function resolvePiProvider(
     modelRuntime.registerProvider(providerId, {
       name: `Miniclaw ${split.providerId} compatible provider`,
       baseUrl: input.baseUrl.trim(),
-      api: 'anthropic-messages',
+      api,
       ...(input.apiKey?.trim() ? { apiKey: input.apiKey.trim() } : {}),
       models: [
         {
           id: split.modelId,
           name: split.modelId,
-          api: 'anthropic-messages',
+          api,
           reasoning: true,
           input: ['text', 'image'],
           cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },

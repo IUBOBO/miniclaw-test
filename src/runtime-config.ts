@@ -82,13 +82,16 @@ const RESERVED_CLAUDE_ENV_KEYS = new Set([
   'ANTHROPIC_AUTH_TOKEN',
   'ANTHROPIC_MODEL',
   'MINICLAW_CLAUDE_ENDPOINT_KIND',
+  'MINICLAW_PROVIDER_API',
   'MINICLAW_FALLBACK_MODEL',
 ]);
 
 export const CLAUDE_ENDPOINT_KIND_ENV = 'MINICLAW_CLAUDE_ENDPOINT_KIND';
+export const MINICLAW_PROVIDER_API_ENV = 'MINICLAW_PROVIDER_API';
 
 const INHERITED_CLAUDE_PROVIDER_ENV_KEYS = [
   CLAUDE_ENDPOINT_KIND_ENV,
+  MINICLAW_PROVIDER_API_ENV,
   'CLAUDE_CODE_OAUTH_TOKEN',
   'ANTHROPIC_BASE_URL',
   'ANTHROPIC_AUTH_TOKEN',
@@ -208,6 +211,43 @@ const MAX_THIRD_PARTY_PROFILES = 20;
 
 type ClaudeProviderMode = 'official' | 'third_party';
 
+export type ProviderApiProtocol =
+  | 'anthropic-messages'
+  | 'openai-completions';
+
+
+function normalizeProviderApiProtocol(
+  input: unknown,
+  providerType: 'official' | 'third_party',
+): ProviderApiProtocol {
+  if (providerType === 'official') {
+    if (
+      input !== undefined &&
+      input !== null &&
+      input !== '' &&
+      input !== 'anthropic-messages'
+    ) {
+      throw new Error(
+        'Official Claude provider only supports anthropic-messages',
+      );
+    }
+
+    return 'anthropic-messages';
+  }
+
+  if (input === undefined || input === null || input === '') {
+    return 'anthropic-messages';
+  }
+
+  if (
+    input === 'anthropic-messages' ||
+    input === 'openai-completions'
+  ) {
+    return input;
+  }
+
+  throw new Error('Invalid field: apiProtocol');
+}
 // Fallback scopes for .credentials.json when stored credentials lack scopes.
 // Differs from OAUTH_SCOPES in routes/config.ts (the authorize-flow request):
 // authorize requests org:create_api_key; credential files need user:sessions:claude_code.
@@ -244,6 +284,7 @@ export interface CachedOAuthUsage {
 }
 
 export interface ClaudeProviderConfig {
+  apiProtocol?: ProviderApiProtocol;
   anthropicBaseUrl: string;
   anthropicAuthToken: string;
   anthropicApiKey: string;
@@ -436,6 +477,7 @@ interface StoredProviderV4 {
   type: 'official' | 'third_party';
   enabled: boolean;
   weight: number;
+  apiProtocol?: ProviderApiProtocol;
   anthropicBaseUrl: string;
   anthropicModel: string;
   secrets: EncryptedSecrets;
@@ -467,6 +509,7 @@ export interface UnifiedProvider {
   type: 'official' | 'third_party';
   enabled: boolean;
   weight: number;
+  apiProtocol: ProviderApiProtocol;
   anthropicBaseUrl: string;
   anthropicAuthToken: string;
   anthropicModel: string;
@@ -484,6 +527,7 @@ export interface UnifiedProviderPublic {
   type: 'official' | 'third_party';
   enabled: boolean;
   weight: number;
+  apiProtocol: ProviderApiProtocol;
   anthropicBaseUrl: string;
   anthropicModel: string;
   hasAnthropicAuthToken: boolean;
@@ -1140,6 +1184,7 @@ function toStoredProviderV4(provider: UnifiedProvider): StoredProviderV4 {
     type: provider.type,
     enabled: provider.enabled,
     weight: Math.max(1, Math.min(100, provider.weight || 1)),
+    apiProtocol: provider.apiProtocol,
     anthropicBaseUrl: provider.anthropicBaseUrl || '',
     anthropicModel: provider.anthropicModel || '',
     secrets: encryptSecrets(secrets),
@@ -1158,6 +1203,10 @@ function fromStoredProviderV4(stored: StoredProviderV4): UnifiedProvider {
     type: stored.type,
     enabled: stored.enabled,
     weight: Math.max(1, Math.min(100, stored.weight || 1)),
+    apiProtocol: normalizeProviderApiProtocol(
+      stored.apiProtocol,
+      stored.type,
+    ),
     anthropicBaseUrl: stored.anthropicBaseUrl || '',
     anthropicAuthToken: secrets.anthropicAuthToken || '',
     anthropicModel: stored.anthropicModel || '',
@@ -1191,6 +1240,7 @@ function migrateV3toV4(v3: ClaudeStoredStateV3Resolved): {
       type: 'official',
       enabled: isOfficialClaudeMode(v3.activeProfileId),
       weight: 1,
+      apiProtocol: 'anthropic-messages',
       anthropicBaseUrl: '',
       anthropicAuthToken: '',
       anthropicModel: '',
@@ -1211,6 +1261,7 @@ function migrateV3toV4(v3: ClaudeStoredStateV3Resolved): {
       type: 'third_party',
       enabled: profile.id === v3.activeProfileId,
       weight: 1,
+      apiProtocol: 'anthropic-messages',
       anthropicBaseUrl: profile.anthropicBaseUrl,
       anthropicAuthToken: profile.anthropicAuthToken,
       anthropicModel: profile.anthropicModel,
@@ -1441,6 +1492,7 @@ export function saveBalancingConfig(
 export function createProvider(input: {
   name: string;
   type: 'official' | 'third_party';
+  apiProtocol?: ProviderApiProtocol;
   anthropicBaseUrl?: string;
   anthropicAuthToken?: string;
   anthropicModel?: string;
@@ -1468,6 +1520,10 @@ export function createProvider(input: {
     type: input.type,
     enabled: state.providers.length === 0 ? true : (input.enabled ?? false),
     weight: Math.max(1, Math.min(100, input.weight ?? 1)),
+    apiProtocol: normalizeProviderApiProtocol(
+      input.apiProtocol,
+      input.type,
+    ),
     anthropicBaseUrl: input.anthropicBaseUrl
       ? normalizeBaseUrl(input.anthropicBaseUrl)
       : '',
@@ -1501,6 +1557,7 @@ export function updateProvider(
   id: string,
   patch: {
     name?: string;
+    apiProtocol?: ProviderApiProtocol;
     anthropicBaseUrl?: string;
     anthropicModel?: string;
     customEnv?: Record<string, string>;
@@ -1518,6 +1575,9 @@ export function updateProvider(
     ...current,
     ...(patch.name !== undefined
       ? { name: normalizeProfileName(patch.name) }
+      : {}),
+    ...(patch.apiProtocol !== undefined
+      ? { apiProtocol: normalizeProviderApiProtocol(patch.apiProtocol, current.type,),}
       : {}),
     ...(patch.anthropicBaseUrl !== undefined
       ? { anthropicBaseUrl: normalizeBaseUrl(patch.anthropicBaseUrl) }
@@ -1673,6 +1733,7 @@ export function providerToConfig(
   provider: UnifiedProvider,
 ): ClaudeProviderConfig {
   return {
+    apiProtocol: provider.apiProtocol,
     anthropicBaseUrl: provider.anthropicBaseUrl,
     anthropicAuthToken: provider.anthropicAuthToken,
     anthropicApiKey: provider.anthropicApiKey,
@@ -1693,6 +1754,7 @@ export function toPublicProvider(
     type: provider.type,
     enabled: provider.enabled,
     weight: provider.weight,
+    apiProtocol: provider.apiProtocol,
     anthropicBaseUrl: provider.anthropicBaseUrl,
     anthropicModel: provider.anthropicModel,
     hasAnthropicAuthToken: !!provider.anthropicAuthToken,
@@ -2941,6 +3003,7 @@ export function mergeClaudeEnvConfig(
   override: ContainerEnvConfig,
 ): ClaudeProviderConfig {
   const merged: ClaudeProviderConfig = {
+    apiProtocol: global.apiProtocol ?? 'anthropic-messages',
     anthropicBaseUrl: override.anthropicBaseUrl || global.anthropicBaseUrl,
     anthropicAuthToken:
       override.anthropicAuthToken || global.anthropicAuthToken,
@@ -3036,9 +3099,10 @@ export function buildContainerEnvLines(
 ): string[] {
   const merged = mergeClaudeEnvConfig(global, override);
   const lines = [
-    `${CLAUDE_ENDPOINT_KIND_ENV}=${merged.anthropicBaseUrl ? 'custom' : 'official'}`,
-    ...buildClaudeEnvLines(merged, profileCustomEnv),
-  ];
+  `${CLAUDE_ENDPOINT_KIND_ENV}=${merged.anthropicBaseUrl ? 'custom' : 'official'}`,
+  `${MINICLAW_PROVIDER_API_ENV}=${merged.apiProtocol ?? 'anthropic-messages'}`,
+  ...buildClaudeEnvLines(merged, profileCustomEnv),
+];
 
   // Append custom env vars (with safety sanitization as defense-in-depth)
   if (override.customEnv) {

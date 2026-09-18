@@ -250,6 +250,7 @@ interface ApplyOptions {
   sessionInvalidation?: {
     modelChanged: boolean;
     baseUrlChanged: boolean;
+    apiProtocolChanged: boolean;
   };
 }
 
@@ -257,6 +258,7 @@ interface PendingProviderSessionInvalidation {
   providerId: string;
   modelChanged: boolean;
   baseUrlChanged: boolean;
+  apiProtocolChanged: boolean;
 }
 
 const PROVIDER_INVALIDATION_STATE_PREFIX =
@@ -287,12 +289,14 @@ function getPendingProviderSessionInvalidation(
           providerId,
           modelChanged: parsed.modelChanged === true,
           baseUrlChanged: parsed.baseUrlChanged === true,
+          apiProtocolChanged: parsed.apiProtocolChanged === true,
         };
       } else {
         durable = {
           providerId,
           modelChanged: true,
           baseUrlChanged: true,
+          apiProtocolChanged: true,
         };
       }
     } catch {
@@ -303,6 +307,7 @@ function getPendingProviderSessionInvalidation(
         providerId,
         modelChanged: true,
         baseUrlChanged: true,
+        apiProtocolChanged: true,
       };
     }
   }
@@ -312,6 +317,7 @@ function getPendingProviderSessionInvalidation(
     providerId,
     modelChanged: durable.modelChanged || volatile.modelChanged,
     baseUrlChanged: durable.baseUrlChanged || volatile.baseUrlChanged,
+    apiProtocolChanged: durable.apiProtocolChanged || volatile.apiProtocolChanged,
   };
 }
 
@@ -323,6 +329,7 @@ function setPendingProviderSessionInvalidation(
     providerId: pending.providerId,
     modelChanged: pending.modelChanged || previous?.modelChanged === true,
     baseUrlChanged: pending.baseUrlChanged || previous?.baseUrlChanged === true,
+    apiProtocolChanged: pending.apiProtocolChanged || previous?.apiProtocolChanged === true,
   };
   // Keep an in-process repair path even if durable state persistence fails.
   volatilePendingProviderSessionInvalidations.set(pending.providerId, merged);
@@ -467,6 +474,11 @@ function hasWorkspaceProviderOverride(
   invalidation?: ApplyOptions['sessionInvalidation'],
 ): boolean {
   if (!invalidation) return false;
+   // API 协议属于 Provider 级别配置，Workspace 当前无法覆盖它。
+  // 因此协议变化时，旧 session 必须失效。
+  if (invalidation.apiProtocolChanged) {
+    return false;
+  }
   const override = getContainerEnvConfig(folder);
   // Shadowing is field-specific. Credentials do not protect a workspace from
   // inheriting a changed global model or Base URL, and when both fields change
@@ -1024,19 +1036,28 @@ configRoutes.patch(
           validation.data.anthropicModel !== undefined &&
           validation.data.anthropicModel !== previous.anthropicModel
         );
+        const apiProtocolChanged = !!(
+          validation.data.apiProtocol !== undefined &&
+          validation.data.apiProtocol !== previous.apiProtocol
+        );
         const customEnvChanged = !!(
           validation.data.customEnv !== undefined &&
           JSON.stringify(validation.data.customEnv) !==
             JSON.stringify(previous.customEnv)
         );
         const protocolFieldChanged =
-          baseUrlChanged || modelChanged || customEnvChanged;
+          baseUrlChanged ||
+          modelChanged ||
+          apiProtocolChanged ||
+          customEnvChanged;
         const pendingInvalidation = getPendingProviderSessionInvalidation(id);
         const sessionInvalidation = {
           modelChanged:
             modelChanged || pendingInvalidation?.modelChanged === true,
           baseUrlChanged:
             baseUrlChanged || pendingInvalidation?.baseUrlChanged === true,
+          apiProtocolChanged:
+            apiProtocolChanged || pendingInvalidation?.apiProtocolChanged === true,
         };
         const shouldClearSessions =
           !!pendingInvalidation || protocolFieldChanged;
@@ -1046,6 +1067,7 @@ configRoutes.patch(
           protocolFieldChanged,
           baseUrlChanged,
           modelChanged,
+          apiProtocolChanged,
           customEnvChanged,
         };
         const commit = () => {
@@ -1197,6 +1219,7 @@ configRoutes.put(
                 sessionInvalidation: {
                   modelChanged: true,
                   baseUrlChanged: true,
+                  apiProtocolChanged: false,
                 },
               },
             )
@@ -1261,6 +1284,7 @@ configRoutes.delete(
         const sessionInvalidation = pendingInvalidation ?? {
           modelChanged: true,
           baseUrlChanged: true,
+          apiProtocolChanged: false,
         };
         const mutation = await mutateClaudeConfigForAllGroups(
           actor,
