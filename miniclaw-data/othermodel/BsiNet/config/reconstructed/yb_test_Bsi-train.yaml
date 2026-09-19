@@ -1,0 +1,91 @@
+schema_version: 1
+network: "BsiNet"
+configuration_type: "reconstructed_from_source"
+source_entrypoint: "/home/yubo/Net/BsiNet/yb_test/Bsi-train.py"
+status_definitions:
+  explicit: "directly recorded by active source or log"
+  inferred: "derived from a documented default or path relationship"
+  conflict: "source records disagree; value is not trusted"
+  unknown: "insufficient evidence"
+fields:
+  model.name:
+    value: "BsiNet"
+    status: "explicit"
+    source: "yb_test/Bsi-train.py:197"
+  model.input_channels:
+    value: 3
+    status: "explicit"
+    source: "yb_test/Bsi-train.py:197"
+  model.num_classes:
+    value: 1
+    status: "explicit"
+    source: "yb_test/Bsi-train.py:197"
+  model.outputs:
+    value:
+      - "boundary"
+      - "mask"
+      - "distance"
+    status: "explicit"
+    source: "yb_test/Bsi-train.py:122-124"
+  training.epochs:
+    value: 100
+    status: "explicit"
+    source: "yb_test/Bsi-train.py:52"
+  training.batch_size:
+    value: 2
+    status: "explicit"
+    source: "yb_test/Bsi-train.py:53"
+  training.validation_percent:
+    value: 10.0
+    status: "explicit"
+    source: "yb_test/Bsi-train.py:57"
+  training.num_workers:
+    value: 0
+    status: "explicit"
+    source: "yb_test/Bsi-train.py:72"
+  hardware.gpu_id:
+    value: 0
+    status: "explicit"
+    source: "yb_test/Bsi-train.py:59"
+  optimizer.type:
+    value: "Adam"
+    status: "explicit"
+    source: "yb_test/Bsi-train.py:102"
+  optimizer.learning_rate:
+    value: 0.0001
+    status: "explicit"
+    source: "yb_test/Bsi-train.py:54"
+  optimizer.weight_decay:
+    value: 1e-08
+    status: "explicit"
+    source: "yb_test/Bsi-train.py:102"
+  loss.type:
+    value: "MultiTaskLoss"
+    status: "explicit"
+    source: "yb_test/Bsi-train.py:103"
+  loss.mask_weight:
+    value: 0.6
+    status: "explicit"
+    source: "yb_test/loss.py:30,44"
+  loss.boundary_weight:
+    value: 0.2
+    status: "explicit"
+    source: "yb_test/loss.py:30,44"
+  loss.distance_weight:
+    value: 0.2
+    status: "explicit"
+    source: "yb_test/loss.py:30,44"
+  paths.scene:
+    value: "HL"
+    status: "explicit"
+    source: "yb_test/Bsi-train.py:24-27"
+  paths.checkpoint:
+    value: "F:\\Bo Yu\\Net\\BsiNet\\yb_test\\Bsi_hl"
+    status: "explicit"
+    source: "yb_test/Bsi-train.py:28"
+  paths.log_csv:
+    value: "F:\\Bo Yu\\Net\\BsiNet\\yb_test\\Bsi_hl\\LossData.csv"
+    status: "explicit"
+    source: "yb_test/Bsi-train.py:32"
+notes:
+

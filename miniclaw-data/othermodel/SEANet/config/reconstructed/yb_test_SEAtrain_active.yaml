@@ -1,0 +1,87 @@
+schema_version: 1
+network: "SEANet"
+configuration_type: "reconstructed_from_source"
+source_entrypoint: "/home/yubo/Net/SEANet/yb_test/SEAtrain.py"
+status_definitions:
+  explicit: "directly recorded by active source or log"
+  inferred: "derived from a documented default or path relationship"
+  conflict: "source records disagree; value is not trusted"
+  unknown: "insufficient evidence"
+fields:
+  model.name:
+    value: "SEANet"
+    status: "explicit"
+    source: "yb_test/SEAtrain.py:973"
+  model.num_classes:
+    value: 1
+    status: "explicit"
+    source: "yb_test/SEAtrain.py:973"
+  model.outputs:
+    value:
+      - "boundary"
+      - "mask"
+      - "distance"
+    status: "explicit"
+    source: "yb_test/SEAtrain.py:894-895"
+  training.epochs:
+    value: 100
+    status: "explicit"
+    source: "yb_test/SEAtrain.py:819"
+  training.batch_size:
+    value: 2
+    status: "explicit"
+    source: "yb_test/SEAtrain.py:820"
+  training.validation_percent:
+    value: 10.0
+    status: "explicit"
+    source: "yb_test/SEAtrain.py:824"
+  training.num_workers:
+    value: 0
+    status: "explicit"
+    source: "yb_test/SEAtrain.py:839"
+  hardware.gpu_id:
+    value: 0
+    status: "explicit"
+    source: "yb_test/SEAtrain.py:826"
+  optimizer.type:
+    value: "Adam"
+    status: "explicit"
+    source: "yb_test/SEAtrain.py:869"
+  optimizer.learning_rate:
+    value: 0.0001
+    status: "explicit"
+    source: "yb_test/SEAtrain.py:821"
+  optimizer.weight_decay:
+    value: 1e-08
+    status: "explicit"
+    source: "yb_test/SEAtrain.py:869"
+  loss.type:
+    value: "MultiTaskLoss"
+    status: "explicit"
+    source: "yb_test/SEAtrain.py:872"
+  loss.mask_weight:
+    value: 0.6
+    status: "explicit"
+    source: "yb_test/loss.py:30,44"
+  loss.boundary_weight:
+    value: 0.2
+    status: "explicit"
+    source: "yb_test/loss.py:30,44"
+  loss.distance_weight:
+    value: 0.2
+    status: "explicit"
+    source: "yb_test/loss.py:30,44"
+  paths.scene:
+    value: "HL blur robustness"
+    status: "explicit"
+    source: "yb_test/SEAtrain.py:788-792"
+  paths.checkpoint:
+    value: "F:\\Bo Yu\\Bsinet_yb\\Mymodel\\noise\\HL\\SEA\\blur"
+    status: "explicit"
+    source: "yb_test/SEAtrain.py:792"
+  paths.log_csv:
+    value: "F:\\Bo Yu\\Bsinet_yb\\Mymodel\\noise\\HL\\SEA\\blur\\LossData.csv"
+    status: "explicit"
+    source: "yb_test/SEAtrain.py:794"
+notes:
+  - "SEAtrain.py contains three fully commented historical blocks; only the final active block is reconstructed."

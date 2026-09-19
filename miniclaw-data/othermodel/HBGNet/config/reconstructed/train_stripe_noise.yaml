@@ -1,0 +1,113 @@
+schema_version: 1
+network: "HBGNet"
+configuration_type: "reconstructed_from_source"
+source_entrypoint: "/home/yubo/Net/HBGNet/train2.py"
+evidence_priority:
+  - "actual TensorBoard event and run directory"
+  - "HBGNet model imports and implementation"
+  - "active training parameters"
+  - "commented or conflicting fields"
+status_definitions:
+  explicit: "directly recorded by active source or log"
+  inferred: "derived from a documented default or path relationship"
+  conflict: "source records disagree; value is not trusted"
+  unknown: "insufficient evidence"
+fields:
+  model.name:
+    value: "Field"
+    status: "explicit"
+    source: "train.py:13,36"
+  model.num_classes:
+    value: 2
+    status: "explicit"
+    source: "train.py:36"
+  model.outputs:
+    value:
+      - "boundary"
+      - "mask"
+      - "distance"
+    status: "explicit"
+    source: "train.py:46-47 and losses.py"
+  training.epochs:
+    value: 100
+    status: "explicit"
+    source: "utils.py:90"
+  training.batch_size:
+    value: 1
+    status: "explicit"
+    source: "utils.py:86"
+  training.validation_batch_size:
+    value: 1
+    status: "explicit"
+    source: "utils.py:88"
+  training.validation_fraction:
+    value: 0.2
+    status: "explicit"
+    source: "train.py:80"
+  training.random_state:
+    value: 41
+    status: "explicit"
+    source: "train.py:80"
+  training.num_workers:
+    value: 0
+    status: "inferred"
+    source: "train.py:107-117"
+    note: "DataLoader num_workers is omitted; PyTorch default is 0."
+  optimizer.type:
+    value: "Adam"
+    status: "explicit"
+    source: "train.py:120"
+  optimizer.learning_rate:
+    value: 0.0001
+    status: "explicit"
+    source: "train.py:120"
+  optimizer.weight_decay:
+    value: 0
+    status: "inferred"
+    source: "train.py:120"
+    note: "weight_decay is omitted; PyTorch Adam default is 0."
+  scheduler.type:
+    value: "CosineAnnealingLR"
+    status: "explicit"
+    source: "train.py:122"
+  scheduler.T_max:
+    value: 10000000000
+    status: "explicit"
+    source: "train.py:122"
+  scheduler.eta_min:
+    value: 1e-05
+    status: "explicit"
+    source: "train.py:122"
+  loss.type:
+    value: "LossF"
+    status: "explicit"
+    source: "train.py:15,27"
+  loss.weights:
+    value:
+      - 1
+      - 1
+      - 1
+    status: "explicit"
+    source: "train.py:21"
+  checkpoint_interval:
+    value: 10
+    status: "explicit"
+    source: "train.py:166"
+  hardware.device:
+    value: "cuda:0"
+    status: "explicit"
+    source: "train2.py:83"
+  paths.train:
+    value: "/media/pc/新加卷1/Bo Yu/data/HL/train/add/stripe_noise_all/train_image"
+    status: "explicit"
+    source: "train2.py:65"
+  paths.output:
+    value: "/media/pc/新加卷1/Bo Yu/Net/HBGNet/yb_test/HBG_HL_stripe_noise"
+    status: "explicit"
+    source: "train2.py:67"
+  paths.tensorboard:
+    value: "/media/pc/新加卷1/Bo Yu/Net/HBGNet/yb_test/HBG_HL_stripe_noise/summary"
+    status: "inferred"
+    source: "train2.py:70-71"
+conflicts:
+

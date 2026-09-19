@@ -1,0 +1,19 @@
+schema_version: 1
+metric_set_id: METRIC-PIXEL-MASK
+role: saved_prediction_sample_check
+implementation: mymodel/code/mask_ARF.py
+implementation_sha256: c191253e5d5292ca108f11b9cd0868cda98740bd56c467bfcc3ad33c66448b61
+symbols:
+- name: binary_metrics
+  lines: 18-35
+- name: AverageMeter
+  lines: 38-49
+threshold_rule: pred > 127 and label > 127
+metrics:
+- Precision
+- Recall
+- F1
+- IoU
+- Accuracy
+aggregation: 每张图独立计算后进行不加权算术平均
+scope_boundary: 用于保存预测的像素掩码核对，不覆盖论文最终指标。

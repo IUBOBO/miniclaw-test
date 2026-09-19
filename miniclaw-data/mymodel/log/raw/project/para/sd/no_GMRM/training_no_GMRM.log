@@ -1,0 +1,16 @@
+2025-06-13 00:17 - INFO - Creating dataset with 171 examples
+2025-06-13 00:17 - INFO - Starting training:
+        Model:           no_GMRM
+        Loss rate:       (0.6, 0.4)
+        Epochs:          100
+        Batch size:      1
+        Learning rate:   0.0001
+        Training size:   154
+        Validation size: 17
+        Device:          cuda
+        Checkpoints:     True
+    
+2025-06-13 00:17 - INFO - Model config saved to F:\Bo Yu\Bsinet_yb\Mymodel\para\sd\no_GMRM\model_config_no_GMRM.yaml
+2025-06-13 00:17 - INFO - Epoch 1 - Train loss: 0.5841 - Val loss: 0.5163 - Boundary loss: 0.5342 - Mask loss: 0.5043 - LR: 0.00010
+2025-06-13 00:18 - INFO - Epoch 2 - Train loss: 0.5198 - Val loss: 0.4306 - Boundary loss: 0.4491 - Mask loss: 0.4183 - LR: 0.00010
+2025-06-13 00:18 - INFO - Epoch 3 - Train loss: 0.4806 - Val loss: 0.4657 - Boundary loss: 0.4409 - Mask loss: 0.4822 - LR: 0.00010

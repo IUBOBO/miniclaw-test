@@ -1,0 +1,72 @@
+schema_version: 1
+network: "HBGNet"
+configuration_type: "reconstructed_from_source"
+source_entrypoint: "/home/yubo/Net/HBGNet/yb_test/HBGtrain.py"
+evidence_priority:
+  - "actual TensorBoard event and run directory"
+  - "HBGNet model imports and implementation"
+  - "active training parameters"
+  - "commented or conflicting fields"
+status_definitions:
+  explicit: "directly recorded by active source or log"
+  inferred: "derived from a documented default or path relationship"
+  conflict: "source records disagree; value is not trusted"
+  unknown: "insufficient evidence"
+fields:
+  training.epochs:
+    value: 100
+    status: "explicit"
+    source: "yb_test/HBGtrain.py:43"
+  training.batch_size:
+    value: 1
+    status: "explicit"
+    source: "yb_test/HBGtrain.py:44"
+  training.learning_rate:
+    value: 0.0001
+    status: "explicit"
+    source: "yb_test/HBGtrain.py:45"
+  training.validation_percent:
+    value: 10.0
+    status: "explicit"
+    source: "yb_test/HBGtrain.py:48"
+  training.num_workers:
+    value: 8
+    status: "explicit"
+    source: "yb_test/HBGtrain.py:63"
+  hardware.gpu_id:
+    value: 0
+    status: "explicit"
+    source: "yb_test/HBGtrain.py:50"
+  optimizer.type:
+    value: "Adam"
+    status: "explicit"
+    source: "yb_test/HBGtrain.py:93"
+  optimizer.weight_decay:
+    value: 1e-08
+    status: "explicit"
+    source: "yb_test/HBGtrain.py:93"
+  loss.weights:
+    value:
+      - 0.4
+      - 0.3
+      - 0.3
+    status: "explicit"
+    source: "yb_test/HBGtrain.py:130"
+  paths.train:
+    value: "F:\\Bo Yu\\data\\Xinjiang\\train"
+    status: "explicit"
+    source: "yb_test/HBGtrain.py:26-29"
+  model.name:
+    value: null
+    status: "conflict"
+    source: "yb_test/HBGtrain.py:20,31,234"
+    note: "The file imports HBG Field but retains BsiNet model names, paths, and an undefined BsiNet constructor."
+  paths.output:
+    value: null
+    status: "conflict"
+    source: "yb_test/HBGtrain.py:30-36"
+    note: "Output and log paths point to BsiNet and are not accepted as HBG run provenance."
+conflicts:
+  - "HBG model import conflicts with BsiNet constructor and model_name."
+  - "Checkpoint/log/config paths point to the BsiNet tree."
+  - "Configuration save call is commented out."

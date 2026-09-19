@@ -1,0 +1,123 @@
+2025-06-16 14:31 - INFO - Creating dataset with 266 examples
+2025-06-16 14:31 - INFO - Starting training:
+        Model:           only_Bbranch
+        Loss rate:       (0.6, 0.4)
+        Epochs:          100
+        Batch size:      2
+        Learning rate:   0.0001
+        Training size:   240
+        Validation size: 26
+        Device:          cuda
+        Checkpoints:     True
+    
+2025-06-16 14:31 - INFO - Model config saved to F:\Bo Yu\Bsinet_yb\Mymodel\para\hl\only_Bbranch\model_config_only_Bbranch.yaml
+2025-06-16 14:32 - INFO - Epoch 1 - Train loss: 0.6440 - Val loss: 0.5587 - Boundary loss: 0.5399 - Mask loss: 0.5712 - LR: 0.00010
+2025-06-16 14:33 - INFO - Epoch 2 - Train loss: 0.5787 - Val loss: 0.5427 - Boundary loss: 0.4888 - Mask loss: 0.5786 - LR: 0.00010
+2025-06-16 14:34 - INFO - Epoch 3 - Train loss: 0.5383 - Val loss: 0.5219 - Boundary loss: 0.4504 - Mask loss: 0.5696 - LR: 0.00010
+2025-06-16 14:34 - INFO - Epoch 4 - Train loss: 0.5152 - Val loss: 0.5003 - Boundary loss: 0.4409 - Mask loss: 0.5399 - LR: 0.00010
+2025-06-16 14:35 - INFO - Epoch 5 - Train loss: 0.4949 - Val loss: 0.4909 - Boundary loss: 0.4304 - Mask loss: 0.5311 - LR: 0.00010
+2025-06-16 14:36 - INFO - Epoch 6 - Train loss: 0.4752 - Val loss: 0.4732 - Boundary loss: 0.3898 - Mask loss: 0.5288 - LR: 0.00010
+2025-06-16 14:37 - INFO - Epoch 7 - Train loss: 0.4595 - Val loss: 0.4316 - Boundary loss: 0.3806 - Mask loss: 0.4655 - LR: 0.00010
+2025-06-16 14:38 - INFO - Epoch 8 - Train loss: 0.4404 - Val loss: 0.4219 - Boundary loss: 0.3430 - Mask loss: 0.4745 - LR: 0.00010
+2025-06-16 14:39 - INFO - Epoch 9 - Train loss: 0.4272 - Val loss: 0.4076 - Boundary loss: 0.3363 - Mask loss: 0.4551 - LR: 0.00010
+2025-06-16 14:39 - INFO - Epoch 10 - Train loss: 0.4108 - Val loss: 0.4027 - Boundary loss: 0.3533 - Mask loss: 0.4356 - LR: 0.00010
+2025-06-16 14:39 - INFO - Checkpoint 10 saved!
+2025-06-16 14:40 - INFO - Epoch 11 - Train loss: 0.4012 - Val loss: 0.3965 - Boundary loss: 0.3124 - Mask loss: 0.4526 - LR: 0.00010
+2025-06-16 14:41 - INFO - Epoch 12 - Train loss: 0.3866 - Val loss: 0.3830 - Boundary loss: 0.2994 - Mask loss: 0.4387 - LR: 0.00010
+2025-06-16 14:42 - INFO - Epoch 13 - Train loss: 0.3743 - Val loss: 0.3742 - Boundary loss: 0.2791 - Mask loss: 0.4376 - LR: 0.00010
+2025-06-16 14:43 - INFO - Epoch 14 - Train loss: 0.3717 - Val loss: 0.3623 - Boundary loss: 0.2745 - Mask loss: 0.4208 - LR: 0.00010
+2025-06-16 14:43 - INFO - Epoch 15 - Train loss: 0.3631 - Val loss: 0.3606 - Boundary loss: 0.2983 - Mask loss: 0.4021 - LR: 0.00010
+2025-06-16 14:44 - INFO - Epoch 16 - Train loss: 0.3522 - Val loss: 0.3400 - Boundary loss: 0.2604 - Mask loss: 0.3930 - LR: 0.00010
+2025-06-16 14:45 - INFO - Epoch 17 - Train loss: 0.3430 - Val loss: 0.3258 - Boundary loss: 0.2447 - Mask loss: 0.3798 - LR: 0.00010
+2025-06-16 14:46 - INFO - Epoch 18 - Train loss: 0.3347 - Val loss: 0.3366 - Boundary loss: 0.2593 - Mask loss: 0.3881 - LR: 0.00010
+2025-06-16 14:47 - INFO - Epoch 19 - Train loss: 0.3307 - Val loss: 0.3300 - Boundary loss: 0.2442 - Mask loss: 0.3872 - LR: 0.00010
+2025-06-16 14:48 - INFO - Epoch 20 - Train loss: 0.3263 - Val loss: 0.3225 - Boundary loss: 0.2466 - Mask loss: 0.3731 - LR: 0.00010
+2025-06-16 14:48 - INFO - Checkpoint 20 saved!
+2025-06-16 14:48 - INFO - Epoch 21 - Train loss: 0.3210 - Val loss: 0.3153 - Boundary loss: 0.2288 - Mask loss: 0.3730 - LR: 0.00010
+2025-06-16 14:49 - INFO - Epoch 22 - Train loss: 0.3173 - Val loss: 0.3184 - Boundary loss: 0.2261 - Mask loss: 0.3800 - LR: 0.00010
+2025-06-16 14:50 - INFO - Epoch 23 - Train loss: 0.3113 - Val loss: 0.3036 - Boundary loss: 0.2272 - Mask loss: 0.3545 - LR: 0.00010
+2025-06-16 14:51 - INFO - Epoch 24 - Train loss: 0.3108 - Val loss: 0.3037 - Boundary loss: 0.2189 - Mask loss: 0.3602 - LR: 0.00010
+2025-06-16 14:52 - INFO - Epoch 25 - Train loss: 0.3062 - Val loss: 0.3040 - Boundary loss: 0.2212 - Mask loss: 0.3592 - LR: 0.00010
+2025-06-16 14:52 - INFO - Epoch 26 - Train loss: 0.3007 - Val loss: 0.2971 - Boundary loss: 0.2163 - Mask loss: 0.3509 - LR: 0.00010
+2025-06-16 14:53 - INFO - Epoch 27 - Train loss: 0.3014 - Val loss: 0.3039 - Boundary loss: 0.2132 - Mask loss: 0.3644 - LR: 0.00010
+2025-06-16 14:54 - INFO - Epoch 28 - Train loss: 0.2993 - Val loss: 0.2885 - Boundary loss: 0.2125 - Mask loss: 0.3392 - LR: 0.00010
+2025-06-16 14:55 - INFO - Epoch 29 - Train loss: 0.2882 - Val loss: 0.2952 - Boundary loss: 0.2107 - Mask loss: 0.3515 - LR: 0.00010
+2025-06-16 14:56 - INFO - Epoch 30 - Train loss: 0.2884 - Val loss: 0.2881 - Boundary loss: 0.2101 - Mask loss: 0.3401 - LR: 0.00010
+2025-06-16 14:56 - INFO - Checkpoint 30 saved!
+2025-06-16 14:56 - INFO - Epoch 31 - Train loss: 0.2847 - Val loss: 0.2816 - Boundary loss: 0.2093 - Mask loss: 0.3297 - LR: 0.00010
+2025-06-16 14:57 - INFO - Epoch 32 - Train loss: 0.2817 - Val loss: 0.2954 - Boundary loss: 0.2102 - Mask loss: 0.3522 - LR: 0.00010
+2025-06-16 14:58 - INFO - Epoch 33 - Train loss: 0.2798 - Val loss: 0.2818 - Boundary loss: 0.2065 - Mask loss: 0.3319 - LR: 0.00010
+2025-06-16 14:59 - INFO - Epoch 34 - Train loss: 0.2769 - Val loss: 0.2893 - Boundary loss: 0.2060 - Mask loss: 0.3449 - LR: 0.00010
+2025-06-16 15:00 - INFO - Epoch 35 - Train loss: 0.2726 - Val loss: 0.2826 - Boundary loss: 0.2091 - Mask loss: 0.3317 - LR: 0.00010
+2025-06-16 15:01 - INFO - Epoch 36 - Train loss: 0.2709 - Val loss: 0.2789 - Boundary loss: 0.2040 - Mask loss: 0.3288 - LR: 0.00010
+2025-06-16 15:01 - INFO - Epoch 37 - Train loss: 0.2747 - Val loss: 0.2882 - Boundary loss: 0.2037 - Mask loss: 0.3445 - LR: 0.00010
+2025-06-16 15:02 - INFO - Epoch 38 - Train loss: 0.2724 - Val loss: 0.2805 - Boundary loss: 0.2020 - Mask loss: 0.3329 - LR: 0.00010
+2025-06-16 15:03 - INFO - Epoch 39 - Train loss: 0.2672 - Val loss: 0.2744 - Boundary loss: 0.2012 - Mask loss: 0.3232 - LR: 0.00010
+2025-06-16 15:04 - INFO - Epoch 40 - Train loss: 0.2649 - Val loss: 0.2776 - Boundary loss: 0.2015 - Mask loss: 0.3284 - LR: 0.00010
+2025-06-16 15:04 - INFO - Checkpoint 40 saved!
+2025-06-16 15:05 - INFO - Epoch 41 - Train loss: 0.2629 - Val loss: 0.2904 - Boundary loss: 0.1995 - Mask loss: 0.3510 - LR: 0.00010
+2025-06-16 15:05 - INFO - Epoch 42 - Train loss: 0.2720 - Val loss: 0.2785 - Boundary loss: 0.1999 - Mask loss: 0.3309 - LR: 0.00010
+2025-06-16 15:06 - INFO - Epoch 43 - Train loss: 0.2633 - Val loss: 0.2783 - Boundary loss: 0.1996 - Mask loss: 0.3307 - LR: 0.00010
+2025-06-16 15:07 - INFO - Epoch 44 - Train loss: 0.2599 - Val loss: 0.2733 - Boundary loss: 0.1982 - Mask loss: 0.3234 - LR: 0.00010
+2025-06-16 15:08 - INFO - Epoch 45 - Train loss: 0.2561 - Val loss: 0.2746 - Boundary loss: 0.1975 - Mask loss: 0.3259 - LR: 0.00010
+2025-06-16 15:09 - INFO - Epoch 46 - Train loss: 0.2535 - Val loss: 0.2709 - Boundary loss: 0.1973 - Mask loss: 0.3199 - LR: 0.00010
+2025-06-16 15:10 - INFO - Epoch 47 - Train loss: 0.2508 - Val loss: 0.2895 - Boundary loss: 0.2009 - Mask loss: 0.3486 - LR: 0.00010
+2025-06-16 15:10 - INFO - Epoch 48 - Train loss: 0.2533 - Val loss: 0.2768 - Boundary loss: 0.1966 - Mask loss: 0.3303 - LR: 0.00010
+2025-06-16 15:11 - INFO - Epoch 49 - Train loss: 0.2588 - Val loss: 0.2730 - Boundary loss: 0.1967 - Mask loss: 0.3239 - LR: 0.00010
+2025-06-16 15:12 - INFO - Epoch 50 - Train loss: 0.2491 - Val loss: 0.2771 - Boundary loss: 0.1952 - Mask loss: 0.3316 - LR: 0.00010
+2025-06-16 15:12 - INFO - Checkpoint 50 saved!
+2025-06-16 15:13 - INFO - Epoch 51 - Train loss: 0.2510 - Val loss: 0.2704 - Boundary loss: 0.1945 - Mask loss: 0.3211 - LR: 0.00010
+2025-06-16 15:14 - INFO - Epoch 52 - Train loss: 0.2438 - Val loss: 0.2749 - Boundary loss: 0.1942 - Mask loss: 0.3288 - LR: 0.00010
+2025-06-16 15:14 - INFO - Epoch 53 - Train loss: 0.2435 - Val loss: 0.2664 - Boundary loss: 0.1944 - Mask loss: 0.3144 - LR: 0.00010
+2025-06-16 15:15 - INFO - Epoch 54 - Train loss: 0.2433 - Val loss: 0.2621 - Boundary loss: 0.1931 - Mask loss: 0.3081 - LR: 0.00010
+2025-06-16 15:16 - INFO - Epoch 55 - Train loss: 0.2426 - Val loss: 0.2759 - Boundary loss: 0.1931 - Mask loss: 0.3312 - LR: 0.00010
+2025-06-16 15:17 - INFO - Epoch 56 - Train loss: 0.2385 - Val loss: 0.2660 - Boundary loss: 0.1932 - Mask loss: 0.3145 - LR: 0.00010
+2025-06-16 15:18 - INFO - Epoch 57 - Train loss: 0.2389 - Val loss: 0.2711 - Boundary loss: 0.1935 - Mask loss: 0.3228 - LR: 0.00010
+2025-06-16 15:19 - INFO - Epoch 58 - Train loss: 0.2338 - Val loss: 0.2667 - Boundary loss: 0.1937 - Mask loss: 0.3153 - LR: 0.00010
+2025-06-16 15:19 - INFO - Epoch 59 - Train loss: 0.2311 - Val loss: 0.2639 - Boundary loss: 0.1921 - Mask loss: 0.3117 - LR: 0.00010
+2025-06-16 15:20 - INFO - Epoch 60 - Train loss: 0.2436 - Val loss: 0.3218 - Boundary loss: 0.1939 - Mask loss: 0.4070 - LR: 0.00010
+2025-06-16 15:20 - INFO - Checkpoint 60 saved!
+2025-06-16 15:21 - INFO - Epoch 61 - Train loss: 0.2427 - Val loss: 0.2685 - Boundary loss: 0.1925 - Mask loss: 0.3191 - LR: 0.00010
+2025-06-16 15:22 - INFO - Epoch 62 - Train loss: 0.2321 - Val loss: 0.2659 - Boundary loss: 0.1920 - Mask loss: 0.3152 - LR: 0.00010
+2025-06-16 15:23 - INFO - Epoch 63 - Train loss: 0.2317 - Val loss: 0.2580 - Boundary loss: 0.1903 - Mask loss: 0.3031 - LR: 0.00010
+2025-06-16 15:23 - INFO - Epoch 64 - Train loss: 0.2291 - Val loss: 0.2660 - Boundary loss: 0.1924 - Mask loss: 0.3150 - LR: 0.00010
+2025-06-16 15:24 - INFO - Epoch 65 - Train loss: 0.2275 - Val loss: 0.2684 - Boundary loss: 0.1921 - Mask loss: 0.3193 - LR: 0.00010
+2025-06-16 15:25 - INFO - Epoch 66 - Train loss: 0.2240 - Val loss: 0.2625 - Boundary loss: 0.1899 - Mask loss: 0.3109 - LR: 0.00010
+2025-06-16 15:26 - INFO - Epoch 67 - Train loss: 0.2228 - Val loss: 0.2646 - Boundary loss: 0.1928 - Mask loss: 0.3125 - LR: 0.00010
+2025-06-16 15:27 - INFO - Epoch 68 - Train loss: 0.2226 - Val loss: 0.2615 - Boundary loss: 0.1905 - Mask loss: 0.3088 - LR: 0.00010
+2025-06-16 15:28 - INFO - Epoch 69 - Train loss: 0.2230 - Val loss: 0.2598 - Boundary loss: 0.1893 - Mask loss: 0.3067 - LR: 0.00010
+2025-06-16 15:28 - INFO - Epoch 70 - Train loss: 0.2227 - Val loss: 0.2641 - Boundary loss: 0.1905 - Mask loss: 0.3132 - LR: 0.00010
+2025-06-16 15:28 - INFO - Checkpoint 70 saved!
+2025-06-16 15:29 - INFO - Epoch 71 - Train loss: 0.2209 - Val loss: 0.2602 - Boundary loss: 0.1893 - Mask loss: 0.3075 - LR: 0.00010
+2025-06-16 15:30 - INFO - Epoch 72 - Train loss: 0.2216 - Val loss: 0.2577 - Boundary loss: 0.1896 - Mask loss: 0.3030 - LR: 0.00010
+2025-06-16 15:31 - INFO - Epoch 73 - Train loss: 0.2233 - Val loss: 0.2608 - Boundary loss: 0.1882 - Mask loss: 0.3091 - LR: 0.00010
+2025-06-16 15:32 - INFO - Epoch 74 - Train loss: 0.2180 - Val loss: 0.2624 - Boundary loss: 0.1891 - Mask loss: 0.3113 - LR: 0.00010
+2025-06-16 15:33 - INFO - Epoch 75 - Train loss: 0.2156 - Val loss: 0.2622 - Boundary loss: 0.1873 - Mask loss: 0.3122 - LR: 0.00010
+2025-06-16 15:33 - INFO - Epoch 76 - Train loss: 0.2142 - Val loss: 0.2645 - Boundary loss: 0.1907 - Mask loss: 0.3137 - LR: 0.00010
+2025-06-16 15:34 - INFO - Epoch 77 - Train loss: 0.2167 - Val loss: 0.2601 - Boundary loss: 0.1895 - Mask loss: 0.3072 - LR: 0.00010
+2025-06-16 15:35 - INFO - Epoch 78 - Train loss: 0.2162 - Val loss: 0.2626 - Boundary loss: 0.1887 - Mask loss: 0.3118 - LR: 0.00010
+2025-06-16 15:36 - INFO - Epoch 79 - Train loss: 0.2183 - Val loss: 0.2609 - Boundary loss: 0.1881 - Mask loss: 0.3094 - LR: 0.00010
+2025-06-16 15:37 - INFO - Epoch 80 - Train loss: 0.2308 - Val loss: 0.2752 - Boundary loss: 0.1921 - Mask loss: 0.3306 - LR: 0.00010
+2025-06-16 15:37 - INFO - Checkpoint 80 saved!
+2025-06-16 15:37 - INFO - Epoch 81 - Train loss: 0.2184 - Val loss: 0.2576 - Boundary loss: 0.1874 - Mask loss: 0.3043 - LR: 0.00010
+2025-06-16 15:38 - INFO - Epoch 82 - Train loss: 0.2107 - Val loss: 0.2571 - Boundary loss: 0.1880 - Mask loss: 0.3031 - LR: 0.00010
+2025-06-16 15:39 - INFO - Epoch 83 - Train loss: 0.2081 - Val loss: 0.2606 - Boundary loss: 0.1882 - Mask loss: 0.3089 - LR: 0.00010
+2025-06-16 15:40 - INFO - Epoch 84 - Train loss: 0.2069 - Val loss: 0.2587 - Boundary loss: 0.1874 - Mask loss: 0.3062 - LR: 0.00010
+2025-06-16 15:41 - INFO - Epoch 85 - Train loss: 0.2073 - Val loss: 0.2577 - Boundary loss: 0.1860 - Mask loss: 0.3054 - LR: 0.00010
+2025-06-16 15:42 - INFO - Epoch 86 - Train loss: 0.2125 - Val loss: 0.2680 - Boundary loss: 0.1868 - Mask loss: 0.3221 - LR: 0.00010
+2025-06-16 15:42 - INFO - Epoch 87 - Train loss: 0.2132 - Val loss: 0.2588 - Boundary loss: 0.1876 - Mask loss: 0.3063 - LR: 0.00010
+2025-06-16 15:43 - INFO - Epoch 88 - Train loss: 0.2052 - Val loss: 0.2622 - Boundary loss: 0.1871 - Mask loss: 0.3123 - LR: 0.00010
+2025-06-16 15:44 - INFO - Epoch 89 - Train loss: 0.2040 - Val loss: 0.2689 - Boundary loss: 0.1886 - Mask loss: 0.3225 - LR: 0.00010
+2025-06-16 15:45 - INFO - Epoch 90 - Train loss: 0.2020 - Val loss: 0.2628 - Boundary loss: 0.1859 - Mask loss: 0.3141 - LR: 0.00010
+2025-06-16 15:45 - INFO - Checkpoint 90 saved!
+2025-06-16 15:46 - INFO - Epoch 91 - Train loss: 0.2005 - Val loss: 0.2582 - Boundary loss: 0.1865 - Mask loss: 0.3060 - LR: 0.00010
+2025-06-16 15:46 - INFO - Epoch 92 - Train loss: 0.1996 - Val loss: 0.2627 - Boundary loss: 0.1864 - Mask loss: 0.3136 - LR: 0.00010
+2025-06-16 15:47 - INFO - Epoch 93 - Train loss: 0.2002 - Val loss: 0.2603 - Boundary loss: 0.1860 - Mask loss: 0.3098 - LR: 0.00010
+2025-06-16 15:48 - INFO - Epoch 94 - Train loss: 0.1985 - Val loss: 0.2627 - Boundary loss: 0.1869 - Mask loss: 0.3133 - LR: 0.00010
+2025-06-16 15:49 - INFO - Epoch 95 - Train loss: 0.1995 - Val loss: 0.2599 - Boundary loss: 0.1858 - Mask loss: 0.3093 - LR: 0.00010
+2025-06-16 15:50 - INFO - Epoch 96 - Train loss: 0.1997 - Val loss: 0.2596 - Boundary loss: 0.1852 - Mask loss: 0.3093 - LR: 0.00010
+2025-06-16 15:51 - INFO - Epoch 97 - Train loss: 0.1955 - Val loss: 0.2610 - Boundary loss: 0.1860 - Mask loss: 0.3110 - LR: 0.00010
+2025-06-16 15:51 - INFO - Epoch 98 - Train loss: 0.1950 - Val loss: 0.2544 - Boundary loss: 0.1852 - Mask loss: 0.3005 - LR: 0.00010
+2025-06-16 15:52 - INFO - Epoch 99 - Train loss: 0.1937 - Val loss: 0.2625 - Boundary loss: 0.1860 - Mask loss: 0.3135 - LR: 0.00010
+2025-06-16 15:53 - INFO - Epoch 100 - Train loss: 0.1949 - Val loss: 0.2591 - Boundary loss: 0.1849 - Mask loss: 0.3085 - LR: 0.00010
+2025-06-16 15:53 - INFO - Checkpoint 100 saved!

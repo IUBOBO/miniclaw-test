@@ -1,0 +1,36 @@
+schema_version: 1
+model: BDGI-Net
+task: binary_mask_segmentation
+artifact_role: saved_prediction_evidence
+code_snapshot_id: SNAP-20260919-92afd6116c4d
+inference_entry:
+  path: mymodel/code/pred_lss.py
+  status: inferred
+  basis: 交接文档将其列为旧批量预测入口
+mask_format: TIFF binary mask
+generation_threshold:
+  value: unknown
+  status: unknown
+evaluation_references:
+- metadata/metrics/METRIC-PIXEL-MASK.yaml
+- metadata/metrics/METRIC-OBJECT-MASK.yaml
+final_performance_reference: metadata/results/PAPER-BDGI-RESULTS.yaml
+scope_boundary: 本记录证明保存预测、输入和标签存在且可核对；不声明训练复现或覆盖论文最终指标。
+run_id: RUN-BDGI-SC-SAVED
+scene: Sichuan
+scene_code: sc
+sample_count: 20
+local_paths:
+  input: samples/evaluations/SC/input
+  ground_truth_mask: samples/evaluations/SC/ground-truth-mask
+  saved_prediction: samples/evaluations/SC/saved-prediction
+remote_paths:
+  input: /hdd2/BoYu/data/sichuan_jiangyou/test/img
+  ground_truth_mask: /hdd2/BoYu/data/sichuan_jiangyou/test/mask
+  saved_prediction: /home/yubo/Bsinet_yb/Mymodel/pred/jy/main64
+file_naming: clipped_<id>_1_1.tif
+prediction_file_time_range_utc:
+  earliest: '2025-06-05T06:34:38+00:00'
+  latest: '2025-06-05T06:34:40+00:00'
+verified_examples: []
+example_metric_status: not_selected

@@ -1,0 +1,70 @@
+{
+  "schema_version": 2,
+  "root": "E:\\Agent\\miniclaw-data",
+  "created_at": "2026-09-18T18:05:37.192083+00:00",
+  "git_initialized": false,
+  "models": {
+    "BDGI-Net": {
+      "role": "proposed_model",
+      "directory": "mymodel",
+      "remote_source": "/home/yubo/Bsinet_yb/Mymodel",
+      "code": "mymodel/code",
+      "config": "mymodel/config",
+      "log": "mymodel/log"
+    },
+    "HBGNet": {
+      "role": "comparison_model",
+      "directory": "othermodel/HBGNet",
+      "remote_source": "/home/yubo/Net/HBGNet",
+      "code": "othermodel/HBGNet/code",
+      "config": "othermodel/HBGNet/config",
+      "log": "othermodel/HBGNet/log"
+    },
+    "REAUNet": {
+      "role": "comparison_model",
+      "directory": "othermodel/REAUNet",
+      "remote_source": "/home/yubo/Net/REAUNet",
+      "code": "othermodel/REAUNet/code",
+      "config": "othermodel/REAUNet/config",
+      "log": "othermodel/REAUNet/log"
+    },
+    "SEANet": {
+      "role": "comparison_model",
+      "directory": "othermodel/SEANet",
+      "remote_source": "/home/yubo/Net/SEANet",
+      "code": "othermodel/SEANet/code",
+      "config": "othermodel/SEANet/config",
+      "log": "othermodel/SEANet/log"
+    },
+    "BsiNet": {
+      "role": "comparison_model",
+      "directory": "othermodel/BsiNet",
+      "remote_source": "/home/yubo/Net/BsiNet",
+      "code": "othermodel/BsiNet/code",
+      "config": "othermodel/BsiNet/config",
+      "log": "othermodel/BsiNet/log"
+    }
+  },
+  "workspace_id": "bdgi-research",
+  "snapshot_id": "SNAP-20260919-92afd6116c4d",
+  "snapshot_captured_at": "2026-09-19T05:50:28.266018+00:00",
+  "manifest": "snapshot-manifest.jsonl",
+  "metadata_root": "metadata",
+  "notes_root": "notes",
+  "samples_root": "samples/evaluations",
+  "default_paper_id": "PAPER-BDGI",
+  "status": "materials_ready_for_agent_development",
+  "evidence_policy": {
+    "final_results": "paper",
+    "implementation": "source_code",
+    "sample_validation": "saved_predictions",
+    "handover": "navigation_only"
+  },
+  "excluded_scope": [
+    "TFNet",
+    "training reproduction",
+    "historical split recovery",
+    "boundary prediction evaluation",
+    "dataset licensing metadata"
+  ]
+}

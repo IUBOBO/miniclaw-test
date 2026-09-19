@@ -1,0 +1,31 @@
+model:
+  name: Tripmodel
+  input_channels: 3
+  num_classes: 1
+optimizer:
+  type: Adam
+  learning_rate: 0.0001
+  weight_decay: 1.0e-08
+  eps: 1.0e-08
+loss:
+  type: MultiTaskLoss
+  alpha: 0.6
+  beta: 0.4
+training:
+  epochs: 100
+  batch_size: 2
+  validation_percent: 10.0
+hardware:
+  device: cuda:0
+  gpu_id: 0
+  num_workers: 0
+paths:
+  image_dir: F:\Bo Yu\data\sichuan_jiangyou\train\add\stripe_noise/
+  boundary_dir: F:\Bo Yu\data\sichuan_jiangyou\train\contour/
+  mask_dir: F:\Bo Yu\data\sichuan_jiangyou\train\mask/
+  checkpoint_dir: F:\Bo Yu\Bsinet_yb\Mymodel\noise\SC\main64\stripe_noise
+  log_csv: F:\Bo Yu\Bsinet_yb\Mymodel\noise\SC\main64\stripe_noise\LossData.csv
+  log_file: F:\Bo Yu\Bsinet_yb\Mymodel\noise\SC\main64\train_image\training_main64-train_image.log
+  config_file: F:\Bo Yu\Bsinet_yb\Mymodel\noise\SC\main64\train_image\model_config_main64-train_image.yaml
+created_at: 2025-12-02 18:48
+notes: main64-train_image

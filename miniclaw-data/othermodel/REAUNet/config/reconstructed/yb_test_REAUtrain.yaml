@@ -1,0 +1,92 @@
+schema_version: 1
+network: "REAUNet"
+configuration_type: "reconstructed_from_source"
+source_entrypoint: "/home/yubo/Net/REAUNet/yb_test/REAUtrain.py"
+status_definitions:
+  explicit: "directly recorded by active source or log"
+  inferred: "derived from a documented default or path relationship"
+  conflict: "source records disagree; value is not trusted"
+  unknown: "insufficient evidence"
+fields:
+  model.name:
+    value: "REAUNet"
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:218"
+  model.input_channels:
+    value: 3
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:218"
+  model.num_classes:
+    value: 1
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:218"
+  model.output_used_for_loss:
+    value: "results[-1] mask"
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:142,168"
+  training.epochs:
+    value: 100
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:70"
+  training.batch_size:
+    value: 2
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:71"
+  training.validation_percent:
+    value: 10.0
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:75"
+  training.num_workers:
+    value: 0
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:90"
+  hardware.gpu_id:
+    value: 0
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:77"
+  optimizer.type:
+    value: "Adam"
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:121"
+  optimizer.learning_rate:
+    value: 0.0003
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:72"
+  optimizer.weight_decay:
+    value: 1e-08
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:121"
+  scheduler.type:
+    value: "ReduceLROnPlateau"
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:123"
+  scheduler.mode:
+    value: "min"
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:123"
+  scheduler.factor:
+    value: 0.1
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:123"
+  scheduler.patience:
+    value: 30
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:124"
+  loss.type:
+    value: "BCEDiceLoss"
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:122"
+  paths.scene:
+    value: "sichuan_jiangyou"
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:37-40"
+  paths.checkpoint:
+    value: "F:\\Bo Yu\\Net\\REAUNet\\yb_test\\REAU_sc2"
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:41"
+  paths.log_csv:
+    value: "F:\\Bo Yu\\Net\\REAUNet\\yb_test\\REAU_sc2\\LossData.csv"
+    status: "explicit"
+    source: "yb_test/REAUtrain.py:43"
+notes:
+

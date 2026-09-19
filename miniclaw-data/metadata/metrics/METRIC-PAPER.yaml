@@ -1,0 +1,25 @@
+schema_version: 1
+metric_set_id: METRIC-PAPER
+authority: paper_final
+source: PDFpaper/BDGI-Net.pdf
+source_locations:
+  definitions: PDF page 7, equations 13-20
+  final_comparison: PDF page 8, Table 3
+metrics:
+- name: Precision
+  direction: higher
+  scope: pixel mask
+- name: IoU
+  direction: higher
+  scope: pixel mask
+- name: GOC
+  direction: lower
+  scope: parcel object
+- name: GUC
+  direction: lower
+  scope: parcel object
+- name: GTC
+  direction: lower
+  scope: parcel object
+results_file: metadata/results/PAPER-BDGI-RESULTS.yaml
+usage_rule: 简历、项目介绍和论文结论只使用本指标集。

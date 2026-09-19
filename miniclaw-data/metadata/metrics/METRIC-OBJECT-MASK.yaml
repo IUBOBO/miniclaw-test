@@ -1,0 +1,22 @@
+schema_version: 1
+metric_set_id: METRIC-OBJECT-MASK
+role: saved_prediction_sample_check
+implementation: mymodel/code/mask_eval.py
+implementation_sha256: 6f01cb230559191da30c304ae380531146264b34422f66ce7493fdbedb034baf
+symbols:
+- name: calculate_oc
+  lines: 7-10
+- name: calculate_uc
+  lines: 12-15
+- name: calculate_tc
+  lines: 17-19
+- name: compute_metrics_for_images
+  lines: 22-129
+prediction_threshold: 205
+connected_component_library: skimage.measure.label/regionprops
+metrics:
+- GOC
+- GUC
+- GTC
+aggregation: 预测地块按面积加权，并在全部图像的预测地块面积上汇总
+scope_boundary: 与像素指标职责不同；用于对象级掩码误差核对，不覆盖论文最终指标。

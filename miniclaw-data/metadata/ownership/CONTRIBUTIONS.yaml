@@ -1,0 +1,28 @@
+schema_version: 1
+ledger_id: OWNERSHIP-BDGI-MINICLAW
+updated_at: '2026-09-19T05:50:28.266018+00:00'
+items:
+- artifact: BDGI-Net paper
+  ownership: paper_author
+  evidence: Bo Yu appears in PDF author list
+  scope_boundary: 作者身份不自动证明每个源码模块均由个人独立实现。
+- artifact: BDGI-Net remote source snapshot
+  ownership: project_source_evidence
+  status: ownership_unverified
+  evidence: remote snapshot and file hashes; no Git history
+- artifact: SD/SC saved predictions
+  ownership: project_result_evidence
+  status: generation_owner_unverified
+  evidence: remote paths, timestamps and file hashes
+- artifact: MiniClaw research metadata package
+  ownership: current_project_extension
+  status: implemented_material_layer
+  evidence: metadata, notes, samples and manifest in this workspace
+- artifact: MiniClaw paper/code/config/log tools
+  ownership: planned_personal_extension
+  status: design_only
+  evidence: E:/Agent/miniclaw-test/docs/V0.3-科研材料补充与保存规范.md
+claim_rules:
+- 源码存在只证明项目能力，不自动证明个人 Ownership。
+- 论文最终指标只引用 PAPER-BDGI-RESULTS。
+- 未实现的 MiniClaw 科研工具保持 design_only。

@@ -1,0 +1,56 @@
+schema_version: 1
+paper_id: PAPER-BDGI
+title: Task-Specific Boundary–Semantic Decoding with Guided Interaction for Remote Sensing Parcel Segmentation
+authors:
+- Mei Yang
+- Bo Yu
+- Chong Zhang
+- Zhen Pan
+- Lijing Gao
+- Fan Min
+status: under_review
+status_label_zh: 在投
+local_file: PDFpaper/BDGI-Net.pdf
+sha256: 4c8347ef0df8d50cf49da00a8ad847e9e04084c5fcd6478bbb1c7937231725fb
+text_extractable: true
+linked_model: BDGI-Net
+linked_source_files:
+- mymodel/code/model.py
+- mymodel/code/LossFunction.py
+- mymodel/code/mask_ARF.py
+- mymodel/code/mask_eval.py
+evidence_locations:
+- topic: BDGI-Net overview and contributions
+  pdf_pages:
+  - 1
+  - 2
+- topic: ETA implementation description
+  pdf_pages:
+  - 3
+  - 4
+- topic: TAB and GMRM method description
+  pdf_pages:
+  - 4
+  - 5
+- topic: dataset and task-loss results
+  pdf_pages:
+  - 7
+  tables:
+  - 1
+  - 2
+- topic: three-scene comparison
+  pdf_pages:
+  - 8
+  tables:
+  - 3
+- topic: parameters and FLOPs
+  pdf_pages:
+  - 9
+  tables:
+  - 4
+- topic: ablation results
+  pdf_pages:
+  - 10
+  tables:
+  - 7
+scope_note: 论文是数据集规模、最终指标、消融结果和复杂度的最终事实来源；保存预测只作为样例证据。

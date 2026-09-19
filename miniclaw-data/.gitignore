@@ -1,0 +1,36 @@
+# Model weights
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.h5
+*.pkl
+INTERRUPTED.pth
+
+# Datasets and imagery
+*.tif
+*.tiff
+*.png
+*.jpg
+*.jpeg
+*.bmp
+*.gif
+*.webp
+*.npy
+*.npz
+*.shp
+*.shx
+*.dbf
+*.prj
+*.geojson
+
+# Generated results and caches
+pred/
+imgs/
+figures/
+visualization/
+__pycache__/
+.pytest_cache/
+.idea/
+*.pyc
+*.part
