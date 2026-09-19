@@ -4,6 +4,11 @@
       "path": "~",
       "allowReadWrite": true,
       "description": "Full home directory access"
+    },
+    {
+      "path": "E:/Agent/miniclaw-test/miniclaw-data",
+      "allowReadWrite": false,
+      "description": "Local BDGI research evidence workspace"
     }
   ],
   "blockedPatterns": [],

@@ -4,31 +4,42 @@ import path from 'node:path';
 
 const root = process.cwd();
 const errors = [];
+const markdownLinkCheckExcludedPrefixes = ['miniclaw-data/'];
 
 function lineNumber(text, index) {
   return text.slice(0, index).split('\n').length;
 }
 
 function repositoryMarkdownFiles() {
-  return execFileSync(
-    'git',
-    [
-      'ls-files',
-      '--cached',
-      '--others',
-      '--exclude-standard',
-      '-z',
-      '--',
-      '*.md',
-    ],
-    {
-      cwd: root,
-      encoding: 'utf8',
-    },
-  )
-    .split('\0')
-    .filter(Boolean)
-    .filter((file) => fs.existsSync(path.join(root, file)));
+  return (
+    execFileSync(
+      'git',
+      [
+        'ls-files',
+        '--cached',
+        '--others',
+        '--exclude-standard',
+        '-z',
+        '--',
+        '*.md',
+      ],
+      {
+        cwd: root,
+        encoding: 'utf8',
+      },
+    )
+      .split('\0')
+      .filter(Boolean)
+      // Research evidence snapshots may preserve upstream READMEs while omitting
+      // unrelated binary illustrations. Product documentation is checked below.
+      .filter((file) => {
+        const normalized = file.replaceAll('\\', '/');
+        return !markdownLinkCheckExcludedPrefixes.some((prefix) =>
+          normalized.startsWith(prefix),
+        );
+      })
+      .filter((file) => fs.existsSync(path.join(root, file)))
+  );
 }
 
 function normalizeLocalTarget(raw) {

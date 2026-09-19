@@ -24,3 +24,7 @@
 最终性能只引用 `metadata/results/PAPER-BDGI-RESULTS.yaml`。保存预测的单图核对值只用于案例说明。本材料不声明完成训练复现、权重复现、历史划分复现或边界预测评测。
 
 `snapshot-manifest.jsonl` 记录所有纳管文件的来源、大小、修改时间和 SHA-256；清单自身不纳入自身哈希。
+
+## GitHub 与本地样本
+
+GitHub 只保存源码、论文、元数据和 manifest。samples/evaluations/ 下的 279 个 TIFF 文件受本目录 .gitignore 保护，只保存在本地并参与样例核验。从 GitHub 新克隆的工作区若尚未补齐这些 TIFF，research_workspace_status 必须返回 degraded 和实际缺失数量，不能把材料误报为完整。

@@ -22,6 +22,7 @@ import {
   defineMcpTool as tool,
   type McpToolDefinition,
 } from './mcp-tool-types.js';
+import { createResearchWorkspaceTools } from './research/research-tools.js';
 
 /** Context required by MCP tools. Passed at construction time. */
 export interface McpContext {
@@ -2812,6 +2813,8 @@ Use the skills panel in the UI to find the skill ID (directory name, e.g. "memor
       ),
     );
   }
+
+  tools.push(...createResearchWorkspaceTools(ctx.workspaceGroup));
 
   return tools;
 }
