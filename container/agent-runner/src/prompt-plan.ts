@@ -40,6 +40,7 @@ export interface MiniclawPromptSources {
   agentIdentity?: string;
   interaction: string;
   security: string;
+  researchEvidence?: string;
   memory?: {
     id: 'memory-system.workspace';
     text: string;
@@ -207,6 +208,18 @@ export function buildMiniclawPromptPlan(
       text: wrap('security', sources.security),
     },
   );
+
+  if (sources.researchEvidence) {
+    inputs.push({
+      id: 'research-evidence',
+      version: 1,
+      scope: 'main',
+      owner: 'workspace',
+      required: false,
+      condition: 'research-workspace.json exists in the active workspace',
+      text: wrap('research-evidence', sources.researchEvidence),
+    });
+  }
 
   if (sources.memory) {
     inputs.push({

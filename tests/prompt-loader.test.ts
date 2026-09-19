@@ -22,6 +22,7 @@ const REQUIRED_FILES = [
   'delivery-contract.assistant.md',
   'delivery-contract.proactive.md',
   'memory-system.workspace.md',
+  'research-evidence.md',
   'identity.miniclaw.md',
   'bootstrap.miniclaw.md',
 ];

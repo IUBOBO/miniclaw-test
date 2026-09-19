@@ -70,7 +70,7 @@ function emptyStatus(): ResearchWorkspaceStatus {
   };
 }
 
-function normalizeRelativePath(value: string): string | null {
+export function normalizeRelativePath(value: string): string | null {
   if (!value || value.includes('\0') || path.isAbsolute(value)) return null;
   const slashPath = value.replaceAll('\\', '/');
   const parts = slashPath.split('/');
@@ -86,7 +86,7 @@ function normalizeRelativePath(value: string): string | null {
   return normalized.replace(/^\.\//, '');
 }
 
-function isWithin(root: string, candidate: string): boolean {
+export function isWithin(root: string, candidate: string): boolean {
   const relative = path.relative(root, candidate);
   return (
     relative === '' ||
@@ -96,7 +96,7 @@ function isWithin(root: string, candidate: string): boolean {
   );
 }
 
-function resolveWithinRoot(
+export function resolveWithinRoot(
   root: string,
   relativePath: string,
 ): { path: string; relativePath: string } | null {
@@ -107,7 +107,7 @@ function resolveWithinRoot(
   return { path: candidate, relativePath: normalized };
 }
 
-class PathOutsideWorkspaceError extends Error {}
+export class PathOutsideWorkspaceError extends Error {}
 
 function readLimited(filePath: string, maxBytes: number): string {
   const stat = fs.statSync(filePath);
@@ -116,7 +116,7 @@ function readLimited(filePath: string, maxBytes: number): string {
   return fs.readFileSync(filePath, 'utf8');
 }
 
-function readLimitedWithinRoot(
+export function readLimitedWithinRoot(
   root: string,
   filePath: string,
   maxBytes: number,
@@ -126,7 +126,7 @@ function readLimitedWithinRoot(
   return readLimited(realFile, maxBytes);
 }
 
-function fileSha256(filePath: string): string {
+export function fileSha256(filePath: string): string {
   return crypto
     .createHash('sha256')
     .update(fs.readFileSync(filePath))

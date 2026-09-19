@@ -154,11 +154,8 @@ import { runPiQueryAttempt } from './runtime/pi/pi-runner.js';
 
 // 路径解析：优先读取环境变量，降级到容器内默认路径（保持向后兼容）
 const WORKSPACE_GROUP =
-  process.env.MINICLAW_WORKSPACE_GROUP ||
-  '/workspace/group';
-const WORKSPACE_IPC =
-  process.env.MINICLAW_WORKSPACE_IPC ||
-  '/workspace/ipc';
+  process.env.MINICLAW_WORKSPACE_GROUP || '/workspace/group';
+const WORKSPACE_IPC = process.env.MINICLAW_WORKSPACE_IPC || '/workspace/ipc';
 
 // 第三方端点必须显式配置模型，官方 Claude 则允许 SDK/CLI 选择默认模型。
 // host/docker runner 会注入权威端点类型；旧运行环境仍可由 base URL 兼容推断。
@@ -269,6 +266,7 @@ const PROACTIVE_DELIVERY_CONTRACT = loadPrompt(
 );
 const AGENT_BUILDER_GUIDELINES = loadPrompt('agent-builder.md');
 const MEMORY_SYSTEM_WORKSPACE = loadPrompt('memory-system.workspace.md');
+const RESEARCH_EVIDENCE_GUIDELINES = loadPrompt('research-evidence.md');
 const MINICLAW_PLATFORM_IDENTITY = loadPrompt('identity.miniclaw.md');
 const MINICLAW_PLATFORM_BOOTSTRAP = loadPrompt('bootstrap.miniclaw.md');
 
@@ -2430,6 +2428,9 @@ async function runQueryAttempt(
     ),
     interaction: INTERACTION_GUIDELINES,
     security: buildSecurityRulesPrompt(),
+    ...(fs.existsSync(path.join(WORKSPACE_GROUP, 'research-workspace.json'))
+      ? { researchEvidence: RESEARCH_EVIDENCE_GUIDELINES }
+      : {}),
     ...(workspaceMemoryInstructions && hasMemoryTools
       ? {
           memory: {
@@ -2566,7 +2567,9 @@ async function runQueryAttempt(
       },
       onTurnActivated: (messages) => {
         activateCurrentInputTurn(
-          latestIpcDeliveryId(messages) || containerInput.turnId || generateTurnId(),
+          latestIpcDeliveryId(messages) ||
+            containerInput.turnId ||
+            generateTurnId(),
         );
       },
       onTurnCompleted: () => {

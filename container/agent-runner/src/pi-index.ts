@@ -259,6 +259,11 @@ function buildSystemPrompt(input: ContainerInput, ctx: McpContext): string {
       : undefined,
     interaction: loadPrompt('interaction.md'),
     security: loadPrompt('security-rules.md'),
+    researchEvidence: fs.existsSync(
+      path.join(WORKSPACE_GROUP, 'research-workspace.json'),
+    )
+      ? loadPrompt('research-evidence.md')
+      : undefined,
     memory: {
       id: 'memory-system.workspace',
       text: loadPrompt('memory-system.workspace.md'),
