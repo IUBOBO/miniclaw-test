@@ -774,7 +774,10 @@ export function analyzeResearchPaper(
 
 export function audienceResearchPaperAnalysis(
   payload: ResearchPaperAnalysisResult,
-): ResearchPaperAnalysisResult {
+) {
   const { internalEvidence: _internalEvidence, ...audience } = payload;
-  return audience;
+  if (!audience.paper) return audience;
+
+  const { registration: _registration, ...paper } = audience.paper;
+  return { ...audience, paper };
 }

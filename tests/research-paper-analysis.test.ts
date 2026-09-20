@@ -266,6 +266,7 @@ describe('research paper analysis', () => {
     const audience = audienceResearchPaperAnalysis(internal);
 
     expect(audience).not.toHaveProperty('internalEvidence');
+    expect(audience.paper).not.toHaveProperty('registration');
     expect(JSON.stringify(audience)).not.toContain('SNAP-PAPER-TEST');
     expect(internal.internalEvidence?.snapshotId).toBe('SNAP-PAPER-TEST');
   });
